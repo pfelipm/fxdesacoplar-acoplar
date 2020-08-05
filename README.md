@@ -2,7 +2,31 @@
 
 # (Des)acoplando las filas de un intervalo de datos
 
-Funciones personalizadas para hojas de cálculo de Google que permiten desagrupar o agrupar las filas de un intervalo de datos.
+Este repositorio contiene el código Apps Script necesario para implementar las funciones personalizadas para hojas de cálculo de Google `DESACOPLAR` y `ACOPLAR`. Encontrarás una motivación más detallada acerca de su utilidad en este artículo introductorio.
+
+**Separar filas con respuestas múltiples**
+
+La función `DESACOPLAR` recorre todas las filas de un intervalo de datos, que se facilita como parámetro de entrada, generando tantas copias consecutivas de cada una de dichas filas como sean necesarias para separar los datos delimitados por la secuencia de caracteres facilitada que se encuentren almacenados en las columnas indicadas por el usuario. Resulta ideal (y de hecho creo con esta finalidad) para para facilitar el tratamiento estadístico de las respuestas a un formulario cuando alguna de sus preguntas admite múltiples opciones (casillas de verificación), que en ese caso aparecen separadas por la secuencia delimitadora `,` .  Tras ser desacopladas, las respuestas (filas) con opciones múltiples se repiten en el intervalo resultante para cada combinación posible de los valores múltiples únicos de las columnas especificadas.
+
+Veamos un ejemplo en el que se muestran inicialmente las respuestas recibidas en la hoja de cálculo asociada a un formulario de Google utilizado en un proceso de inscripción a una serie de actividades de formación:
+
+<table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom, Edpuzzle, Sites</td><td>Mañana, Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle, Sites</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom, Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
+
+Como se puede apreciar, las columnas **Curso** y **Turno** contiene valores múltiples, separados por coma - espacio, habituales cuando se utilizan preguntas a las que se puede responder marcando casillas de verificación. Veamos ahora cuál sería el resultado cuando se aplica la función `DESACOPLAR` sobre el intervalo anterior y las mencionadas columnas:
+
+<table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Prieto González, Isabel</td><td>Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Edpuzzle</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Edpuzzle</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom</td><td>Mañana</td><td>Online</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Tarde</td><td>Presencial</td></tr></tbody></table>
+
+Ahora solo vemos valores únicos en las columnas **Curso** y **Turno** de cada fila. Para lograrlo, se han generado tantas respuestas a partir de cada fila (respuesta) original como han sido necesarias para acoger todas las combinaciones posibles de los valores de las columnas que inicialmente contenía múltiples opciones, _descoplándolas_ 
+
+**Unificar filas con respuestas múltiples**
+
+La función `ACOPLAR` realiza un proceso complementario al anterior, **aunque no necesariamente simétrico**. En este caso, la función recibe también un intervalo de datos pero, en esta ocasión, en lugar de indicar las columnas cuyos datos múltiples deben procesarse, se debe facilitar la columna o columnas **clave** que caracterizan de manera individual cada una de las respuestas recibidas (entidades o elementos únicos, hablando en términos generales). La función reagrupará ahora las filas de manera que los distintos valores de aquellas columnas no identificadas como de tipo clave se consolidarán en una sola celda utilizando como separador la secuencia delimitadora que se especifique.
+
+En el caso de nuestro ejemplo, si aplicamos `ACOPLAR` sobre la tabla anterior, indicando como columna clave **Nombre**, el resultado será de nuevo el inicial:
+
+<table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom, Edpuzzle, Sites</td><td>Mañana, Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle, Sites</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom, Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
+
+`ACOPLAR` evita duplicados, ignorando los valores múltiples repetidos correspondientes a una misma entidad (mismo campo o campos clave). 
 
 # Función DESACOPLAR()
 
@@ -15,7 +39,7 @@ Dos posibilidades distintas:
 1.  Abre el editor GAS de tu hoja de cálculo (`Herramientas` :fast\_forward: `Editor de secuencias de comandos`), pega el código que encontrarás dentro del archivo `Código.gs` de este repositorio y guarda los cambios. Debes asegurarte de que se esté utilizando el nuevo motor GAS JavaScript V8 (`Ejecutar` :fast\_forward: `Habilitar ... V8`).
 2.  Hazte una copia de esto :point\_right: [fx (Des)acoplar # demo](https://docs.google.com/spreadsheets/d/1_d391kb-1X1jKSEvvmJyxREJeGRLiJFsYFmlY8M7LV0/template/preview) :point\_left:, elimina su contenido y edita a tu gusto.
 
-Esta función, `MEDIAMOVIL`, estará en breve disponible en mi complemento para hojas de cálculo [HdC+](https://gsuite.google.com/marketplace/app/hdc+/410659432888), junto con otras nuevas características que tengo previsto implementar próximamente.
+Las funciones, `DESACOPLAR` y `ACOPLAR` estarán en breve disponibles en mi complemento para hojas de cálculo [HdC+](https://gsuite.google.com/marketplace/app/hdc+/410659432888), junto con otras nuevas características que tengo previsto implementar próximamente.
 
 ![Selección_091](https://user-images.githubusercontent.com/12829262/86293166-64739e80-bbf2-11ea-8030-2e5f5c37fcaa.png)
 
