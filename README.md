@@ -1,12 +1,12 @@
 ![Banner des(acoplar)](https://user-images.githubusercontent.com/12829262/89408938-84324100-d721-11ea-85f0-89b0a2e95b10.png)
 
-1.  (Des)acoplando las filas de un intervalo de datos
-2.  Función DESACOPLAR()
-3.  Función ACOPLAR()
-4.  Modo de uso
-5.  Mirando bajo el capó gear (implementación)
-6.  Mejoras
-7.  [Licencia](#licencia)
+*   [(Des)acoplando las filas de un intervalo de datos](#desacoplando-las-filas-de-un-intervalo-de-datos)
+*   [Función DESACOPLAR()](#funci%C3%B3n-desacoplar)
+*   [Función ACOPLAR()](#funci%C3%B3n-acoplar)
+*   [Modo de uso](#modo-de-uso)
+*   [Mirando bajo el capó gear (implementación](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
+*   [Mejoras](#mejoras)
+*   [Licencia](#licencia)
 
 # (Des)acoplando las filas de un intervalo de datos
 
