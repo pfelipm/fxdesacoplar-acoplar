@@ -97,13 +97,19 @@ Como de costumbre, repasemos algunas cosillas relativas a la implementación.
 *   Se gestionan los parámetros de entrada, en general, y los opcionales, en particular.
 *   Se realiza el control de errores y se emiten mensajes informativos para el usuario por medio de excepciones controladas, en su caso.
 
-No obstante en esta ocasión también hay otros aspectos que me parece relevante comentar. Comencemos por el bloque que se encarga del control de los parámetros de entrada de `DESACOPLAR` (el de `ACOPLAR` es prácticamente idéntico).
+No obstante en esta ocasión también hay otros aspectos que me parece relevante comentar. Hablaremos en lo que sigue de:
+
+*   Parámetros opcionales, de número indeterminado, y el operador de propagación.
+*   Conjuntos JavaScript.
+*   Funciones de tipo IIFE recursivas.
+
+Comencemos por el bloque que se encarga del control de los parámetros de entrada de `DESACOPLAR` (el de `ACOPLAR` es prácticamente idéntico).
 
 ```javascript
 function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
- 
+
   // Control de parámetros inicial
- 
+
   if (typeof intervalo == 'undefined' || !Array.isArray(intervalo)) throw 'No se ha indicado un intervalo.';
   if (typeof encabezado != 'boolean') encabezado = true;
   if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas.';
@@ -129,7 +135,7 @@ Nos encontraríamos con esto:
 
 <table><tbody><tr><td><strong>Parámetro</strong></td><td><strong>Valor</strong></td></tr><tr><td>intervalo</td><td>Matriz con el contenido de las celdas del rango A1:D4</td></tr><tr><td>encabezado</td><td>'' (cadena vacía)&nbsp;<span>:warning:</span>&nbsp;</td></tr><tr><td>separador</td><td>'' (cadena vacía)&nbsp;<span>:warning:</span>&nbsp;</td></tr><tr><td>columna</td><td>2</td></tr></tbody></table>
 
-Y evidentemente no es lo que queremos. 
+Y evidentemente no es lo que queremos.
 
 Hay que ser muy cauto a la hora de utilizar la declaración de parámetros opcionales que nos ofrece ES6. En general, si tras un parámetro declarado de este modo pueden aparecer otros, será necesario introducir controles adicionales sobre tipos (`typeof`) y / o valores para asegurarnos de que no se nos cuela nada que no debería. Incluso es posible que tengamos que recurrir al modo en que se hacían las cosas antes de ES6, como aquí, para salvar este problemilla con las cadenas vacías:
 
@@ -145,7 +151,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
   // Control de parámetros inicial
 
   ...
-   
+
   let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas];
   if (columnas.length == 0) throw 'No se han indicado columnas a descoplar.';
   if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas deben indicarse mediante números enteros';
@@ -154,9 +160,43 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
 Al diseñar estas funciones me pareció buena idea permitir que el usuario pudiera especificar un número indefinido de columnas. Esto lo conseguimos utilizando el (bendito) **operador de propagación** de ES6 (`...`), que aquí viene a significar algo así como "y todo lo que venga detrás". En este caso, los valores cardinales del resto de columnas pasadas como parámetro se reciben dentro del vector `masColumnas`, que viene a ser algo así como un coche escoba para **el** **resto** de parámetros. Comodísimo, oiga. Y decía hace un momento lo de _bendito_ porque antes de ES6 teníamos con andarnos con [saltos mortales hacia atrás](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) com el objeto `arguments` para resolver esto de manera más o menos satisfactoria.
 
-Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (de columnas) que integra tanto el parámetro  `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una.
+Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (de columnas) que integra tanto el parámetro `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una.
 
 En mi opinión, dominar el operador de propagación y saber emplear las denominadas _asignaciones desestructurantes_ (¡menudo palabro!) son aspectos fundamentales para hablar un JavaScript elegante. Si estas cosas te suenan un poco (o un mucho) a chino, te recomiendo una leída atenta (y probablemente reiterada) a este [excelente artículo](https://codeburst.io/a-simple-guide-to-destructuring-and-es6-spread-operator-e02212af5831).
+
+Avancemos un poco, justo debajo del bloque de gestión de parámetros nos encontramos con esto:
+
+```javascript
+// Se construye un conjunto (set) para evitar automáticamente duplicados en columnas con valores múltiples
+   
+let colSet = new Set();
+columnas.forEach(col => colSet.add(col - 1));
+```
+
+JavaScript dispone de dos estructuras de datos extremadamente interesantes: los mapas (**map**) y los conjuntos (**set**). Se trata de colecciones iterables similares a los vectores, pero con ciertas particularidades que los hacen preferibles a estos últimos en determinadas circunstancias. Por ejemplo, lo bueno que tienen los conjuntos es que evitan por su propia naturaleza la inserción de datos duplicados, y además lo hacen mediante una estrategia interna basadas en _tablas hash_ que resulta extremadamente eficiente, hablamos de algo como **O(1)**, probablemente mucho más de lo que tu implementación basada en vectores, en la que se comprobara la existencia de cada elemento antes de su inserción, alcanzaría. Por cierto, si quieres saber más sobre vectores y conjuntos, no dejes de leer [esto](https://medium.com/front-end-weekly/es6-set-vs-array-what-and-when-efc055655e1a).
+
+El caso es que verás que en el código de estas dos funciones personalizadas se hace un uso insistente de los conjuntos. En el fragmento de código anterior, por ejemplo, se utiliza uno para eliminar posibles elementos duplicados en la indicación de las columnas con valores múltiples por parte de un usuario posiblemente despistado: simplemente se van metiendo los parámetros que identifican las columnas en él (restando 1 por aquello de que los arrays JavaScript comienzan en 0, como ya sabemos). Así de fácil.
+
+Ya solo queda contemplar la posibilidad de que exista una fila de encabezado en el intervalo de datos a procesar, que se colocará en su sitio justo antes de que la función devuelva el intervalo ya desacoplado. Sí, otra vez el operador de desestructuración, en este caso para [concatenar vectores](https://twitter.com/pfelipm/status/1279056400476524545).
+
+```javascript
+// Listos para comenzar
+
+if (encabezado) encabezado = intervalo.shift();
+ 
+/* Aquí el resto del código de la función */
+ 
+// Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
+
+return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacoplado;
+```
+
+Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento es la siguientes:
+
+1.  Se recorre una a una cada fila del intervalo.
+2.  Se construye un conjunto 
+
+**wip**
 
 # Mejoras
 
