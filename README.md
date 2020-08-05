@@ -89,6 +89,75 @@ Las funciones, `DESACOPLAR` y `ACOPLAR` estarán en breve disponibles en mi comp
 
 # Mirando bajo el capó :gear: (implementación)
 
+Como de costumbre, repasemos algunas cosillas relativas a la implementación.
+
+`DESACOPLAR` y `ACOPLAR` son sendas funciones personalizadas para hojas de cálculo de Google creadas usando Apps Script y, como tales, tienen una estructura y un _modus operandi_ particulares que ya comenté con cierto detenimiento hablando de la implementación de otra función que he desarrollado recientemente, `mediamovil`. En particular, puedes revisar [esta sección](https://github.com/pfelipm/mediamovil/blob/master/README.md#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n) de su documentación si no estás muy familiarizado con el modo en que:
+
+*   Se disponen los elementos de la ayuda contextual por medio de [JSDoc](https://jsdoc.app/about-getting-started.html).
+*   Se gestionan los parámetros de entrada, en general, y los opcionales, en particular.
+*   Se realiza el control de errores y se emiten mensajes informativos para el usuario por medio de excepciones controladas, en su caso.
+
+No obstante en esta ocasión también hay otros aspectos que me parece relevante comentar. Comencemos por el bloque que se encarga del control de los parámetros de entrada de `DESACOPLAR` (el de `ACOPLAR` es prácticamente idéntico).
+
+```javascript
+function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
+ 
+  // Control de parámetros inicial
+ 
+  if (typeof intervalo == 'undefined' || !Array.isArray(intervalo)) throw 'No se ha indicado un intervalo.';
+  if (typeof encabezado != 'boolean') encabezado = true;
+  if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas.';
+  separador = separador || ', ';
+  if (typeof separador != 'string') throw 'El separador no es del tipo correcto.';
+```
+
+Como hemos visto en apartados anteriores de este documento, `encabezado` y `separador` son parámetros opcionales de la función (de `columna` y `...masColumnas` hablaremos en un momento porque esa es otra guerra). Entonces ¿por qué no hemos usado la sintaxis ES6 habitual en estos casos? Algo como esto:
+
+```javascript
+function DESACOPLAR(intervalo, encabezado = 'true', separador = ', ', columna, ...masColumnas) {
+```
+
+Pues no lo hemos hecho porque este tipo de declaraciones esconde una trampa, y la trampa es que no es posible utilizar el punto y coma para "pasar" al siguiente parámetro, obviando su declaración explícita, de modo que se adopte el valor indicado por defecto. ¿Y eso por qué? Porque en ese caso lo que se le pasa realmente a la función es una cadena vacía. Y una cadena vacía no es lo mismo que nada.
+
+Por ejemplo, de haber declarado `DESACOPLAR` del modo indicado justo arriba, al hacer:
+
+```
+=DESACOPLAR( A1:D4 ; ; ; 2 )
+```
+
+Nos encontraríamos con esto:
+
+<table><tbody><tr><td><strong>Parámetro</strong></td><td><strong>Valor</strong></td></tr><tr><td>intervalo</td><td>Matriz con el contenido de las celdas del rango A1:D4</td></tr><tr><td>encabezado</td><td>'' (cadena vacía)&nbsp;<span>:warning:</span>&nbsp;</td></tr><tr><td>separador</td><td>'' (cadena vacía)&nbsp;<span>:warning:</span>&nbsp;</td></tr><tr><td>columna</td><td>2</td></tr></tbody></table>
+
+Y evidentemente no es lo que queremos. 
+
+Hay que ser muy cauto a la hora de utilizar la declaración de parámetros opcionales que nos ofrece ES6. En general, si tras un parámetro declarado de este modo pueden aparecer otros, será necesario introducir controles adicionales sobre tipos (`typeof`) y / o valores para asegurarnos de que no se nos cuela nada que no debería. Incluso es posible que tengamos que recurrir al modo en que se hacían las cosas antes de ES6, como aquí, para salvar este problemilla con las cadenas vacías:
+
+```javascript
+ separador = separador || ', ';
+```
+
+¿Y qué pasa con las columnas?
+
+```javascript
+function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
+
+  // Control de parámetros inicial
+
+  ...
+   
+  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas];
+  if (columnas.length == 0) throw 'No se han indicado columnas a descoplar.';
+  if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas deben indicarse mediante números enteros';
+  if (Math.max(...columnas) > intervalo[0].length) throw 'Al menos una columna está fuera del intervalo.';
+```
+
+Al diseñar estas funciones me pareció buena idea permitir que el usuario pudiera especificar un número indefinido de columnas. Esto lo conseguimos utilizando el (bendito) **operador de propagación** de ES6 (`...`), que aquí viene a significar algo así como "y todo lo que venga detrás". En este caso, los valores cardinales del resto de columnas pasadas como parámetro se reciben dentro del vector `masColumnas`, que viene a ser algo así como un coche escoba para **el** **resto** de parámetros. Comodísimo, oiga. Y decía hace un momento lo de _bendito_ porque antes de ES6 teníamos con andarnos con [saltos mortales hacia atrás](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) com el objeto `arguments` para resolver esto de manera más o menos satisfactoria.
+
+Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (de columnas) que integra tanto el parámetro  `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una.
+
+En mi opinión, dominar el operador de propagación y saber emplear las denominadas _asignaciones desestructurantes_ (¡menudo palabro!) son aspectos fundamentales para hablar un JavaScript elegante. Si estas cosas te suenan un poco (o un mucho) a chino, te recomiendo una leída atenta (y probablemente reiterada) a este [excelente artículo](https://codeburst.io/a-simple-guide-to-destructuring-and-es6-spread-operator-e02212af5831).
+
 # Mejoras
 
 # **Licencia**
