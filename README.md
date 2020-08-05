@@ -4,7 +4,7 @@
 *   [Función DESACOPLAR()](#funci%C3%B3n-desacoplar)
 *   [Función ACOPLAR()](#funci%C3%B3n-acoplar)
 *   [Modo de uso](#modo-de-uso)
-*   [Mirando bajo el capó gear (implementación](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
+*   [Mirando bajo el capó ⚙️ (implementación](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
 *   [Mejoras](#mejoras)
 *   [Licencia](#licencia)
 
