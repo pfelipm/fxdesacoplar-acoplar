@@ -12,7 +12,7 @@ Veamos un ejemplo en el que se muestran inicialmente las respuestas recibidas en
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom, Edpuzzle, Sites</td><td>Mañana, Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle, Sites</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom, Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-Como se puede apreciar, las columnas **Curso** y **Turno** contiene valores múltiples, separados por coma - espacio, habituales cuando se utilizan preguntas a las que se puede responder marcando casillas de verificación. Veamos ahora cuál sería el resultado cuando se aplica la función `DESACOPLAR` sobre el intervalo anterior y las mencionadas columnas:
+Como se puede apreciar, las columnas **Curso** y **Turno** contiene valores múltiples, separados por _coma espacio_, habituales cuando se utilizan preguntas a las que se puede responder marcando casillas de verificación. Veamos ahora cuál sería el resultado cuando se aplica la función `DESACOPLAR` sobre el intervalo anterior y las mencionadas columnas:
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Prieto González, Isabel</td><td>Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Edpuzzle</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Edpuzzle</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom</td><td>Mañana</td><td>Online</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Tarde</td><td>Presencial</td></tr></tbody></table>
 
@@ -20,17 +20,53 @@ Ahora solo vemos valores únicos en las columnas **Curso** y **Turno** de cada f
 
 **Unificar filas con respuestas múltiples**
 
-La función `ACOPLAR` realiza un proceso complementario al anterior, **aunque no necesariamente simétrico**. En este caso, la función recibe también un intervalo de datos pero, en esta ocasión, en lugar de indicar las columnas cuyos datos múltiples deben procesarse, se debe facilitar la columna o columnas **clave** que caracterizan de manera individual cada una de las respuestas recibidas (entidades o elementos únicos, hablando en términos generales). La función reagrupará ahora las filas de manera que los distintos valores de aquellas columnas no identificadas como de tipo clave se consolidarán en una sola celda utilizando como separador la secuencia delimitadora que se especifique.
+La función `ACOPLAR` realiza un proceso complementario al anterior, **aunque no necesariamente simétrico** ⚠️. En este caso, la función recibe también un intervalo de datos pero ahora, en lugar de indicar las columnas cuyos datos múltiples deben procesarse, se debe facilitar la columna o columnas **clave** cuya combinación caracteriza de manera individual cada una de las respuestas recibidas (entidades o elementos únicos, hablando en términos generales). La función reagrupará las filas de manera que los distintos valores de aquellas columnas no identificadas como de tipo clave se consolidarán en una cadena de texto única, utilizando como separador la secuencia delimitadora que se especifique, en cada respuesta diferenciada.
 
 En el caso de nuestro ejemplo, si aplicamos `ACOPLAR` sobre la tabla anterior, indicando como columna clave **Nombre**, el resultado será de nuevo el inicial:
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom, Edpuzzle, Sites</td><td>Mañana, Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle, Sites</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom, Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-`ACOPLAR` evita duplicados, ignorando los valores múltiples repetidos correspondientes a una misma entidad (mismo campo o campos clave).
+`ACOPLAR` evita duplicados, ignorando los valores múltiples repetidos correspondientes a una misma entidad (filas con el mismo campo o campos clave).
 
 # Función DESACOPLAR()
 
+```
+=DESACOPLAR( intervalo ; [encabezado] ; [separador] ; columna ; [otras_columnas]  )
+```
+
+*   `intervalo`: Rango de datos de entrada.
+*   `encabezado`: Un valor `VERDADERO` o `FALSO` que indica si el intervalo de datos especificado dispone de una fila de encabezado con etiquetas para cada columna. En este caso se reproducirá también en el intervalo de datos devuelto como resultado. De omitirse se considera `VERDADERO.`
+*   `separador`: Secuencia de caracteres que separa los valores múltiples. También es opcional, si se omite se usará `,` (coma espacio).
+*   `columna`: Indicador numérico de la posición de la columna que contiene datos múltiples que deben desacoplarse, contando desde la izquierda y comenzado por 1.
+*   `otras_columnas`: Columnas adicionales, opcionales, con datos múltiples a desacoplar. Pueden indicarse tantas como se deseen, siempre separadas por `;` (punto y coma).
+
+Ejemplo:
+
+```
+=DESACOPLAR( A1:D4 ; ; ; 2 ; 3 )
+```
+
+![fx DESACOPLAR - Hojas de cálculo de Google](https://user-images.githubusercontent.com/12829262/89433912-32021780-d743-11ea-9913-11334a60be59.gif)
+
 # Función ACOPLAR()
+
+```
+=ACOPLAR( intervalo ; [encabezado] ; [separador] ; columna ; [otras_columnas]  )
+```
+
+*   `intervalo`: Rango de datos de entrada.
+*   `encabezado`: Un valor `VERDADERO` o `FALSO` que indica si el intervalo de datos especificado dispone de una fila de encabezado con etiquetas para cada columna. En este caso se reproducirá también en el intervalo de datos devuelto como resultado. De omitirse se considera `VERDADERO.`
+*   `separador`: Secuencia de caracteres que se utilizará para separar los valores múltiples. También es opcional, si se omite se usará `,` (coma espacio).
+*   `columna`: Indicador numérico de la posición de la columna clave que identifica entidades (filas) únicas, contando desde la izquierda y comenzado por 1.
+*   `otras_columnas`: Columnas adicionales, opcionales, que también son de tipo clave. Pueden indicarse tantas como se deseen, siempre separadas por `;` (punto y coma). Cuando se especifican varias columnas clave se combinarán todas ellas para determinar qué filas deben diferenciarse.
+
+Ejemplo:
+
+```
+=ACOPLAR( A1:D16 ; ; ; 1 )
+```
+
+![fx ACOPLAR # demo - Hojas de cálculo de Google](https://user-images.githubusercontent.com/12829262/89435797-a2119d00-d745-11ea-91a0-f97e3f8e3c83.gif)
 
 # **Modo de uso**
 
