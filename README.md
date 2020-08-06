@@ -430,9 +430,9 @@ Aunque el proceso secuencial de las funciones `DESCOPLAR()` y `ACOPLAR()` no dej
 
 # Mejoras
 
-Ambas funciones evitan los valores duplicados tanto en el proceso de combinación como en el de desagrupación de filas. Tal vez podría resultar de utilidad introducir un parámetro adicional en ambas para permitir la existencia de esos duplicados, aunque personalmente no acabo de apreciar en qué circunstancias eso sería conveniente.
+Estas dos funciones evitan por diseño los valores duplicados tanto en el proceso de combinación como en el de desagrupación de filas. Tal vez podría resultar de utilidad introducir un parámetro adicional en ambas para permitir la existencia de esos duplicados, aunque personalmente no acabo de apreciar en qué circunstancias eso sería conveniente.
 
-Queda por tanto como ejercicio de ampliación, que seguramente requerirá del uso de vectores en lugar de los conjuntos actuales en aquellos fragmentos del código que se ocupan de la gestión de los valores múltiples en la columnas seleccionadas por el usuario.
+Queda por tanto como propuesta de ampliación, que con toda seguridad requerirá del uso de vectores en lugar de los conjuntos actuales en aquellos fragmentos del código que se ocupan de la gestión de los valores múltiples en las columnas seleccionadas por el usuario.
 
 # **Licencia**
 
