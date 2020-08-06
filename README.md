@@ -186,25 +186,27 @@ Ya solo queda contemplar la posibilidad de que exista una fila de encabezado en 
 
 if (encabezado) encabezado = intervalo.shift();
 
+/* .......................................*/ 
 /* Aquí el resto del código de la función */
+/* .......................................*/ 
 
 // Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
 
 return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacoplado;
 ```
 
-Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento es la siguiente:
+Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento se desarrolla de acuerdo con esta secuencia de cuatro pasos:
 
-1.  Se recorre una a una cada fila del intervalo mediante un bucle `.forEach` (líneas 48 - 121).
-2.  Se genera una estructura matricial que contiene los valores múltiples únicos de las columnas que deben desacoplarse (50 - 61).
+1.  Se recorre una a una cada fila del intervalo (líneas 48 - 121 en el código fuente de la función).
+2.  Se genera una estructura matricial que contiene los valores múltiples únicos de las columnas que deben desacoplarse (52 - 61).
 3.  A partir de la estructura matricial anterior se genera una nueva en la que se realizan todas las combinaciones posibles entre los valores extraídos de cada una de las columnas (63 - 94). Esta es la parte más densa del código o probablemente la menos comprensible, de entrada, ya que se ha implementado con una función recursiva, que se invoca a sí misma al ser declarada en plan IIFE (_immediately invoked function expression_). Por cierto, información jugosa sobre las IIFE [aquí](https://gustavodohara.com/blogangular/todos-los-misterios-iife-immediately-invoked-function-expressions/).
-4.  Por último, a partir de los valores de la fila original se generan tantas copias como combinaciones posibles se hayan generado en (3), completando datos con los procedentes de las columnas que no se han desacoplado.
+4.  Por último, a partir de los valores de la fila original se generan tantas copias como combinaciones posibles se hayan generado en (3), completando datos con los procedentes de las columnas que no se han desacoplado y se guardan en la matriz resultado que devolverá la función (101 - 119).
 
 Para entender mejor lo que sigue, permíteme retomar el ejemplo con el que se iniciaba este documento, aunque con ligeras modificaciones en los datos para que lo que sigue resulte más clarificador. Supongamos que nuestra función está procesando esta fila y le hemos indicado que debe desacoplar los datos de las columnas 2 (**Curso**) y 3 (**Turno**):
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-Hagamos zoom :mag: sobre **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.spli`t y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
+Hagamos ahora zoom :mag: sobre el **paso** **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.spli`t y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
 
 ```javascript
 // Enumerar los valores únicos en cada columna que se ha indicado contiene datos múltiples
@@ -227,7 +229,7 @@ Al terminar, partiendo de nuestro ejemplo, nos encontraríamos esto:
 opciones = [  [ 'Classroom' , 'EdPuzzle' ] , [ 'Mañana , 'Tarde' ]  ]
 ```
 
-A continuación viene la parte más complicada, en **\[3\]**. Básicamente, el código de este bloque masticará el vector `opciones` anterior y devolverá esto:
+A continuación viene la parte más complicada, en el **paso** **\[3\]**. Básicamente, el código de este bloque masticará el vector `opciones` anterior y devolverá esto:
 
 ```javascript
 combinaciones = [  [ 'Classroom' , 'Mañana' ] ,  [ 'Classroom' , 'Tarde' ] , [ 'EdPuzzle' , 'Mañana' ] ,  [ 'EdPuzzle' , 'Tarde' ]  ]
@@ -280,7 +282,7 @@ Se _descabeza_ el vector `opciones` y se invoca de nueva `combinar()` con los el
 
 Sí, las secuencias recursivas en ocasiones resuelven problemas complejos sin esfuerzo aparente. Y aunque siempre pueden transformarse en iterativas, lo que normalmente se traduce en algoritmos más eficientes, resultan tan naturales y elegantes que en este caso me vas a permitir que no lo haga.
 
-Finalmente, en \[4\] ya solo hay que duplicar cada fila tantas veces como sea necesario para acomodar las combinaciones de las columnas con valores múltiples y devolver el resultado, claro está.
+Finalmente, en el **paso \[4\]** ya solo hay que duplicar cada fila tantas veces como sea necesario para acomodar las combinaciones de las columnas con valores múltiples, guardar las filas generadas en la matriz `intervaloDesacoplado` y finalmente devolverla como resultado, claro está, con o sin su fila de encabezados.
 
 ```javascript
   // Ahora hay que generar las filas repetidas para cada combinación de datos múltiples
@@ -323,7 +325,92 @@ Y hasta aquí llega la función `DESACOPLAR()`.
 
 La implementación de `ACOPLAR()`, por su parte, creo que es un poco más sencilla.
 
-El bloque de control de parámetros es prácticamente idéntico, aunque en este caso la columna o columnas que facilita el usuario son las que determinarán cómo se deben identificar las filas que constituyen elementos únicos diferenciados, algo así como la _clave principal_ del intervalo de datos. El resto de columnas, no especificadas de manera explícita como parámetros al invocar la función, serán las que se combinarán para generar una sola fila canónica, con valores múltiples únicos separados por la secuencia de caracteres delimitadora escogida. En esta ocasión nos vendrá bien tener a mano este último grupo de columnas, así que, tirando nuevamente de conjuntos, compenzaremos poara para representar ambos grupos de columnas (`colSet` y `colNoClaveSet`).
+El bloque de control de parámetros es prácticamente idéntico, aunque en este caso la columna o columnas que facilita el usuario son las que determinarán qué filas son identificadas como entidades únicas y diferenciadas, algo así como la _clave principal_ del intervalo de datos. Los valores en el resto de columnas, no especificadas de manera explícita como parámetros al invocar la función, serán los que se combinarán para generar una sola fila canónica, con valores múltiples (sin repetición) separados por la secuencia de caracteres de separación escogida. En esta ocasión nos vendrá bien tener también a mano este último grupo de columnas, así que llevaremos la cuenta de ambos grupos mediante los conjuntos `colSet` y `colNoClaveSet`.
+
+```javascript
+// Se construye un conjunto (set) para evitar automáticamente duplicados en columnas CLAVE
+   
+let colSet = new Set();
+columnas.forEach(col => colSet.add(col - 1));
+ 
+// ...y en este conjunto se identifican las columnas susceptibles de contener valores que deben concatenarse
+ 
+let colNoClaveSet = new Set();
+for (let col = 0; col < intervalo[0].length; col++) {
+ 
+  if (!colSet.has(col)) colNoClaveSet.add(col);
+ 
+}
+```
+
+Tomaremos las mismas precauciones por lo que hace a la existencia (o no) de una fila de encabezado:
+
+```javascript
+if (encabezado) encabezado = intervalo.shift();
+```
+
+La estrategia de `ACOPLAR()` es la siguiente:
+
+1.  Se recorren todas las filas del intervalo de datos para extraer las claves principales. El intervalo de datos resultado contendrá tantas filas diferenciadas como claves únicas identificadas (líneas 179 - 191 en el código fuente de la función).
+2.  Para cada clave única (193 - 224):
+    1.  Se obtienen todas las filas en las que está presente dicha clave.
+    2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (207 - 215).
+    3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (217 -  222).
+
+```javascript
+// Listos para comenzar
+ 
+if (encabezado) encabezado = intervalo.shift();
+ 
+let intervaloAcoplado = [];
+
+// 1ª pasada: recorremos el intervalo fila a fila para identificar entidades (concatenación de columnas clave) únicas
+ 
+let entidadesClave = new Set();
+intervalo.forEach(fila => {
+   
+  let clave = '';                
+  // Se utiliza delimitador de campo (-) para minimizar confusiones (Ej: claves: col1 = 'pablo', col3 = '1' / col1 = 'pablo1', col3 = '')
+  for (let col of colSet) {clave += '-' + String(fila[col]);}
+  entidadesClave.add(clave);
+                   
+});
+
+// 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
+
+for (let clave of entidadesClave) {
+
+  let filasEntidad = intervalo.filter(fila => {
+   
+    let claveActual = '';
+    for (let col of colSet) {claveActual += '-' + String(fila[col]);}
+    return clave == claveActual;
+   
+  });
+
+  // Acoplar todas las filas de cada entidad, concatenando valores en columnas no-clave con separador indicado
+
+  let filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
+  let noClaveSets = [];
+  for (let col = 0; col < colNoClaveSet.size; col++) {noClaveSets.push(new Set())}; // Vector de sets para recoger valores múltiples  
+  filasEntidad.forEach(fila => {
+     
+    let conjunto = 0;  
+    for (let col of colNoClaveSet) {noClaveSets[conjunto++].add(String(fila[col]));}
+                           
+  });
+
+  // Set >> Vector >> Cadena única con separador
+
+  conjunto = 0;
+  for (let col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
+
+  intervaloAcoplado.push(filaAcoplada);
+ 
+}
+
+return encabezado.map ? [encabezado, ...intervaloAcoplado] : intervaloAcoplado;
+```
 
 # Mejoras
 
