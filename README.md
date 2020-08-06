@@ -225,7 +225,7 @@ Al terminar, partiendo de nuestro ejemplo, nos encontraríamos esto:
 opciones = [  [ 'Classroom' , 'EdPuzzle' ] , [ 'Mañana , 'Tarde' ]  ]
 ```
 
-A continuación viene la parte más complicada, en **\[3\]**. Básicamente, el código de este bloque masticará el vector `opciones` y devolverá esto:
+A continuación viene la parte más complicada, en **\[3\]**. Básicamente, el código de este bloque masticará el vector `opciones` anterior y devolverá esto:
 
 ```javascript
 combinaciones = [  [ 'Classroom' , 'Mañana' ] ,  [ 'Classroom' , 'Tarde' ] , [ 'EdPuzzle' , 'Mañana' ] ,  [ 'EdPuzzle' , 'Tarde' ]  ]
@@ -241,7 +241,7 @@ let combinaciones = (function combinar(vector) {
 })(opciones);
 ```
 
-La función `combinar()` emplea una estrategia recursiva para reducir la complejidad del problema de combinar los elementos de n vectores. El _caso base_ se da cuando hemos alcanzado la última columna a combinar, esto es, el último elemento del vector `opciones`. Recuerda que cada uno de estos elementos es a su vez un vector que contiene los valores múltiples extraídos de la columna correspondiente de la fila que estamos procesando. En este caso la función simplemente devuelve el vector de valores múltiples de la columna, siguiendo con nuestro ejemplo `[ 'Mañana' , 'Tarde' ]`.
+La función `combinar()` emplea una estrategia recursiva para reducir la complejidad del problema de combinar los elementos, en número indeterminado, de n vectores. El _caso base_ se da cuando hemos alcanzado la última columna a combinar, esto es, el último elemento del vector `opciones`. Recuerda que cada uno de estos elementos es a su vez un vector que contiene los valores múltiples extraídos de la columna correspondiente de la fila que estamos procesando. En este caso final, la función simplemente devuelve el vector de valores múltiples de la columna, siguiendo con nuestro ejemplo sería `[ 'Mañana' , 'Tarde' ]`.
 
 ```javascript
 if (vector.length == 1) {
@@ -252,7 +252,7 @@ if (vector.length == 1) {
 }
 ```
 
-De no ser así nos encontraremos en el _caso general_, donde se realiza la reducción de complejidad del problema, descabezando el vector de `opciones` para invocar de nuevo la función recursiva con el conjunto de opciones reducido. A medida que se va deshaciendo la recursión, partiendo del caso base, se "monta" el vector `resultado` generando todas las posibles combinaciones en cada etapa de la recursión por medio de sendos `.forEach`, de nuevo acompañados por nuestro ineludible operador (`...`), que ahora usamos para concatenar los elementos de `subvector` y `subresultado`.
+De no ser así nos encontraremos en el _caso general_, donde se realiza la reducción de complejidad del problema:
 
 ```javascript
 else {
@@ -272,7 +272,11 @@ else {
 }
 ```
 
-Sí, las secuencias recursivas parecen resolver en ocasiones problemas complejos sin esfuerzo, casi casi automágicamente. Y aunque siempre pueden transformarse en iterativas, normalmente más eficientes, resultan tan elegantes que en este caso me vas a permitir que no lo haga.
+Se _descabeza_ el vector `opciones` y se invoca de nueva `combinar()` con los elementos que quedan. A medida que se va deshaciendo la recursión, partiendo del caso base y de "abajo a arriba", se va montando el vector `resultado`, generando todas las posibles combinaciones de los elementos devueltos por la última llamada a la función recursiva y los que forman parte del elemento descabezado en cada etapa de la recursión por medio de sendos `.forEach`, de nuevo acompañados por nuestro ineludible operador (`...`), que ahora usamos para concatenar los elementos de `subvector` y `subresultado`.
+
+![(Des)Acoplar # diagrama recursión](https://user-images.githubusercontent.com/12829262/89544729-c7b0ac00-d802-11ea-849b-c734c9f1116c.png)
+
+Sí, las secuencias recursivas en ocasiones resuelven problemas complejos sin esfuerzo aparente. Y aunque siempre pueden transformarse en iterativas, lo que normalmente se traduce en algoritmos más eficientes, resultan tan naturales y elegantes que en este caso me vas a permitir que no lo haga.
 
 **...WIP...**
 
