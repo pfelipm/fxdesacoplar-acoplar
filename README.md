@@ -4,7 +4,7 @@
 *   [Función DESACOPLAR()](#funci%C3%B3n-desacoplar)
 *   [Función ACOPLAR()](#funci%C3%B3n-acoplar)
 *   [Modo de uso](#modo-de-uso)
-*   [Mirando bajo el capó ⚙️ (implementación](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
+*   [Mirando bajo el capó (implementación](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n) [⚙️](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
 *   [Mejoras](#mejoras)
 *   [Licencia](#licencia)
 
@@ -12,7 +12,7 @@
 
 Este repositorio contiene el código Apps Script necesario para implementar las funciones personalizadas para hojas de cálculo de Google `DESACOPLAR` y `ACOPLAR`. Encontrarás una motivación más detallada acerca de su utilidad en este artículo introductorio.
 
-**Separar filas con respuestas múltiples**
+### **Separar filas con respuestas múltiples**
 
 La función `DESACOPLAR()` recorre todas las filas de un intervalo de datos, que se facilita como parámetro de entrada, generando tantas copias consecutivas de cada una de dichas filas como sean necesarias para separar los datos delimitados por la secuencia de caracteres facilitada que se encuentren almacenados en las columnas indicadas por el usuario. Resulta ideal (y de hecho creo con esta finalidad) para para facilitar el tratamiento estadístico de las respuestas a un formulario cuando alguna de sus preguntas admite múltiples opciones (casillas de verificación), que en ese caso aparecen separadas por la secuencia delimitadora `,` . Tras ser desacopladas, las respuestas (filas) con opciones múltiples se repiten en el intervalo resultante para cada combinación posible de los valores múltiples únicos de las columnas especificadas.
 
@@ -26,7 +26,7 @@ Como se puede apreciar, las columnas **Curso** y **Turno** contiene valores múl
 
 Ahora solo vemos valores únicos en las columnas **Curso** y **Turno** de cada fila. Para lograrlo, se han generado tantas respuestas a partir de cada fila (respuesta) original como han sido necesarias para acoger todas las combinaciones posibles de los valores de las columnas que inicialmente contenían múltiples opciones, realizando por tanto algo así como un proceso de descoplándodo.
 
-**Unificar filas con respuestas múltiples**
+### **Unificar filas con respuestas múltiples**
 
 La función `ACOPLAR` realiza un proceso complementario al anterior, **aunque no necesariamente simétrico** ⚠️. En este caso, la función recibe también un intervalo de datos pero ahora, en lugar de indicar las columnas cuyos datos múltiples deben procesarse, se debe facilitar la columna o columnas **clave** cuya combinación caracteriza de manera individual cada una de las respuestas recibidas (entidades o elementos únicos, hablando en términos generales). La función reagrupará las filas de manera que los distintos valores de aquellas columnas no identificadas como de tipo clave se consolidarán en una cadena de texto única, utilizando como separador la secuencia delimitadora que se especifique, en cada respuesta diferenciada.
 
@@ -34,9 +34,9 @@ En el caso de nuestro ejemplo, si aplicamos `ACOPLAR` sobre la tabla anterior, i
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom, Edpuzzle, Sites</td><td>Mañana, Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle, Sites</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom, Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-`ACOPLAR` evita duplicados, ignorando los valores múltiples repetidos correspondientes a una misma entidad (filas con el mismo campo o campos clave).
+`ACOPLAR` evita duplicados, ignorando los valores múltiples repetidos correspondientes a una misma entidad (filas con el mismo campo o combinación de campos clave concatenados).
 
-# Función DESACOPLAR()
+# Usando la función DESACOPLAR()
 
 ```
 =DESACOPLAR( intervalo ; [encabezado] ; [separador] ; columna ; [otras_columnas]  )
@@ -56,7 +56,7 @@ Ejemplo:
 
 ![fx DESACOPLAR - Hojas de cálculo de Google](https://user-images.githubusercontent.com/12829262/89433912-32021780-d743-11ea-9913-11334a60be59.gif)
 
-# Función ACOPLAR()
+# Usando la función ACOPLAR()
 
 ```
 =ACOPLAR( intervalo ; [encabezado] ; [separador] ; columna ; [otras_columnas]  )
@@ -87,9 +87,9 @@ Las funciones, `DESACOPLAR` y `ACOPLAR` estarán en breve disponibles en mi comp
 
 ![Selección_091](https://user-images.githubusercontent.com/12829262/86293166-64739e80-bbf2-11ea-8030-2e5f5c37fcaa.png)
 
-# Mirando bajo el capó :gear: (implementación)
+# Mirando bajo el capó (implementación :gear:)
 
-Como de costumbre, repasemos algunas cosillas relativas a la implementación.
+Como de costumbre, repasemos algunas cosillas relativas a la implementación. Si solo estás interesado en cómo usar estas funciones en tus propias hojas de cálculo, puedes omitir este apartado sin remordimientos.
 
 `DESACOPLAR()` y `ACOPLAR()` son sendas funciones personalizadas para hojas de cálculo de Google creadas usando Apps Script y, como tales, tienen una estructura y un _modus operandi_ particulares que ya comenté con cierto detenimiento hablando de la implementación de otra función que he desarrollado recientemente, `MEDIAMOVIL()`. En particular, puedes revisar [esta sección](https://github.com/pfelipm/mediamovil/blob/master/README.md#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n) de su documentación si no estás muy familiarizado con el modo en que:
 
@@ -102,6 +102,8 @@ No obstante en esta ocasión también hay otros aspectos que me parece relevante
 *   Parámetros opcionales, de número indeterminado, y el operador de propagación.
 *   Conjuntos JavaScript.
 *   Funciones de tipo IIFE recursivas.
+
+### Las interioridades de DESACOPLAR()
 
 Comencemos por el bloque que se encarga del control de los parámetros de entrada de `DESACOPLAR` (el de `ACOPLAR` es prácticamente idéntico).
 
@@ -173,7 +175,7 @@ let colSet = new Set();
 columnas.forEach(col => colSet.add(col - 1));
 ```
 
-JavaScript dispone de dos estructuras de datos extremadamente interesantes: los mapas (**map**) y los conjuntos (**set**). Se trata de colecciones iterables similares a los vectores, pero con ciertas particularidades que los hacen preferibles a estos últimos en determinadas circunstancias. Por ejemplo, lo bueno que tienen los conjuntos es que evitan por su propia naturaleza la inserción de datos duplicados, y además lo hacen mediante una estrategia interna basadas en _tablas hash_ que resulta extremadamente eficiente, hablamos de algo como **O(1)**, probablemente mucho más de lo que tu implementación basada en vectores, en la que se comprobara la existencia de cada elemento antes de su inserción, alcanzaría. Por cierto, si quieres saber más sobre vectores y conjuntos, no dejes de leer [esto](https://medium.com/front-end-weekly/es6-set-vs-array-what-and-when-efc055655e1a).
+JavaScript dispone de dos estructuras de datos extremadamente interesantes: los **mapas** (_map_) y los **conjuntos** (_set_). Se trata en ambos casos de colecciones iterables similares a los vectores, pero con ciertas particularidades que las hacen preferibles a estos últimos en determinadas circunstancias. Por ejemplo, lo bueno que tienen los **conjuntos** es que **evitan por su propia naturaleza la inserción de datos duplicados**, y además lo hacen mediante una estrategia interna basada en _tablas hash_ que resulta extremadamente eficiente, hablamos de un coste asintótico tipo **O(1)**, probablemente mucho más de lo que una implementación basada en vectores, en la que se comprobara la existencia de cada elemento antes de su inserción, alcanzaría. Por cierto, si quieres saber más sobre vectores y conjuntos, no dejes de leer [esto](https://medium.com/front-end-weekly/es6-set-vs-array-what-and-when-efc055655e1a).
 
 El caso es que verás que en el código de estas dos funciones personalizadas se hace un uso insistente de los conjuntos. En el fragmento de código anterior, por ejemplo, se utiliza uno para eliminar posibles elementos duplicados en la indicación de las columnas con valores múltiples por parte de un usuario posiblemente despistado: simplemente se van metiendo los parámetros que identifican las columnas en él (restando 1 por aquello de que los arrays JavaScript comienzan en 0, como ya sabemos). Así de fácil. Este conjunto (`colSet`) será utilizado más abajo en el meollo del trabajo que realiza la función.
 
@@ -278,7 +280,50 @@ Se _descabeza_ el vector `opciones` y se invoca de nueva `combinar()` con los el
 
 Sí, las secuencias recursivas en ocasiones resuelven problemas complejos sin esfuerzo aparente. Y aunque siempre pueden transformarse en iterativas, lo que normalmente se traduce en algoritmos más eficientes, resultan tan naturales y elegantes que en este caso me vas a permitir que no lo haga.
 
-**...WIP...**
+Finalmente, en \[4\] ya solo hay que duplicar cada fila tantas veces como sea necesario para acomodar las combinaciones de las columnas con valores múltiples y devolver el resultado, claro está.
+
+```javascript
+  // Ahora hay que generar las filas repetidas para cada combinación de datos múltiples
+  // Ej:
+  //     ENTRADA: combinaciones = [ [a, 1], [a, 2], [b, 1], [b, 2] ]
+  //     SALIDA:  respuestaDesacoplada = [ [Pablo, a, 1, Tarde], [Pablo, a, 2, Tarde], [Pablo, b, 1, Tarde], [Pablo, b, 2, Tarde] ]
+ 
+  let respuestaDesacoplada = combinaciones.map(combinacion => {
+                       
+    let colOpciones = 0;
+    let filaDesacoplada = [];
+    fila.forEach((valor, columna) => {
+     
+      // Tomar columna de la fila original o combinación de datos generada anteriormente
+      // correspondiente a cada una de las columnas con valores múltiples
+     
+      if (!colSet.has(columna)) filaDesacoplada.push(valor);
+      else filaDesacoplada.push(combinacion[colOpciones++]);
+     
+    });
+    return filaDesacoplada;
+  });
+ 
+  // Se desestructura (...) respuestaDesacoplada dado que combinaciones.map es [[]]
+
+  intervaloDesacoplado.push(...respuestaDesacoplada);
+
+});
+ 
+// Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
+
+return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacoplado; 
+
+}
+```
+
+Y hasta aquí llega la función `DESACOPLAR()`.
+
+### Las interioridades de ACOPLAR()
+
+La implementación de `ACOPLAR()`, por su parte, creo que es un poco más sencilla.
+
+El bloque de control de parámetros es prácticamente idéntico, aunque en este caso la columna o columnas que facilita el usuario son las que determinarán cómo se deben identificar las filas que constituyen elementos únicos diferenciados, algo así como la _clave principal_ del intervalo de datos. El resto de columnas, no especificadas de manera explícita como parámetros al invocar la función, serán las que se combinarán para generar una sola fila canónica, con valores múltiples únicos separados por la secuencia de caracteres delimitadora escogida. En esta ocasión nos vendrá bien tener a mano este último grupo de columnas, así que, tirando nuevamente de conjuntos, compenzaremos poara  para representar ambos grupos de columnas (`colSet` y `colNoClaveSet`).
 
 # Mejoras
 
