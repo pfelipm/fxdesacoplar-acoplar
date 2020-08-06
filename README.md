@@ -1,10 +1,10 @@
 ![Banner des(acoplar)](https://user-images.githubusercontent.com/12829262/89408938-84324100-d721-11ea-85f0-89b0a2e95b10.png)
 
 *   [(Des)acoplando las filas de un intervalo de datos](#desacoplando-las-filas-de-un-intervalo-de-datos)
-*   [Función DESACOPLAR()](#funci%C3%B3n-desacoplar)
-*   [Función ACOPLAR()](#funci%C3%B3n-acoplar)
+*   [Función DESACOPLAR()](#usando-la-funci%C3%B3n-desacoplar)
+*   [Función ACOPLAR()](#usando-la-funci%C3%B3n-acoplar)
 *   [Modo de uso](#modo-de-uso)
-*   [Mirando bajo el capó (implementación](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n) [⚙️](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
+*   [Mirando bajo el capó (implementación](#mirando-bajo-el-cap%C3%B3-implementaci%C3%B3n-gear) [⚙️](#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n))
 *   [Mejoras](#mejoras)
 *   [Licencia](#licencia)
 
@@ -287,29 +287,29 @@ Finalmente, en \[4\] ya solo hay que duplicar cada fila tantas veces como sea ne
   // Ej:
   //     ENTRADA: combinaciones = [ [a, 1], [a, 2], [b, 1], [b, 2] ]
   //     SALIDA:  respuestaDesacoplada = [ [Pablo, a, 1, Tarde], [Pablo, a, 2, Tarde], [Pablo, b, 1, Tarde], [Pablo, b, 2, Tarde] ]
- 
+
   let respuestaDesacoplada = combinaciones.map(combinacion => {
-                       
+
     let colOpciones = 0;
     let filaDesacoplada = [];
     fila.forEach((valor, columna) => {
-     
+
       // Tomar columna de la fila original o combinación de datos generada anteriormente
       // correspondiente a cada una de las columnas con valores múltiples
-     
+
       if (!colSet.has(columna)) filaDesacoplada.push(valor);
       else filaDesacoplada.push(combinacion[colOpciones++]);
-     
+
     });
     return filaDesacoplada;
   });
- 
+
   // Se desestructura (...) respuestaDesacoplada dado que combinaciones.map es [[]]
 
   intervaloDesacoplado.push(...respuestaDesacoplada);
 
 });
- 
+
 // Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
 
 return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacoplado; 
@@ -323,7 +323,7 @@ Y hasta aquí llega la función `DESACOPLAR()`.
 
 La implementación de `ACOPLAR()`, por su parte, creo que es un poco más sencilla.
 
-El bloque de control de parámetros es prácticamente idéntico, aunque en este caso la columna o columnas que facilita el usuario son las que determinarán cómo se deben identificar las filas que constituyen elementos únicos diferenciados, algo así como la _clave principal_ del intervalo de datos. El resto de columnas, no especificadas de manera explícita como parámetros al invocar la función, serán las que se combinarán para generar una sola fila canónica, con valores múltiples únicos separados por la secuencia de caracteres delimitadora escogida. En esta ocasión nos vendrá bien tener a mano este último grupo de columnas, así que, tirando nuevamente de conjuntos, compenzaremos poara  para representar ambos grupos de columnas (`colSet` y `colNoClaveSet`).
+El bloque de control de parámetros es prácticamente idéntico, aunque en este caso la columna o columnas que facilita el usuario son las que determinarán cómo se deben identificar las filas que constituyen elementos únicos diferenciados, algo así como la _clave principal_ del intervalo de datos. El resto de columnas, no especificadas de manera explícita como parámetros al invocar la función, serán las que se combinarán para generar una sola fila canónica, con valores múltiples únicos separados por la secuencia de caracteres delimitadora escogida. En esta ocasión nos vendrá bien tener a mano este último grupo de columnas, así que, tirando nuevamente de conjuntos, compenzaremos poara para representar ambos grupos de columnas (`colSet` y `colNoClaveSet`).
 
 # Mejoras
 
