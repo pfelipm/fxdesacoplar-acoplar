@@ -379,7 +379,7 @@ intervalo.forEach(fila => {
 });
 ```
 
-**Paso \[2-i\]**. Usamos el método `.filter` sobre el vector de filas del intervalo para procesar de manera agrupada las que tengan una misma clave única. 
+**Paso \[2-i\]**. Usamos el método `.filter` sobre el vector de filas del intervalo para procesar de manera agrupada las que tengan una misma clave única.
 
 ```javascript
 // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
@@ -411,7 +411,7 @@ for (let clave of entidadesClave) {
   });
 ```
 
-**Paso \[2-iii\]**. Ahora se construye la fila canónica que representa a todas las que contienen la misma clave única integrando las columnas clave con los valores múltiples extraídos de las que no lo son, concatenados utilizando la secuencia de caracteres delimitadora. Y, finalmente, tras repetir el proceso con la totalidad de claves únicas, la función devuelve la matriz resultado. 
+**Paso \[2-iii\]**. Ahora se construye la fila canónica que representa a todas las que contienen la misma clave única integrando las columnas clave con los valores múltiples extraídos de las que no lo son, concatenados utilizando la secuencia de caracteres delimitadora. Y, finalmente, tras repetir el proceso con la totalidad de claves únicas, la función devuelve la matriz resultado.
 
 ```javascript
   // Set >> Vector >> Cadena única con separador
@@ -426,7 +426,7 @@ for (let clave of entidadesClave) {
 return encabezado.map ? [encabezado, ...intervaloAcoplado] : intervaloAcoplado;
 ```
 
-Aunque la secuencia de acciones de ambas funciones, `DESCOPLAR()` y `ACOPLAR()`, no deja de ser lógica, lo cierto es que las operaciones de manipulación de vectores bidimensionales y conjuntos, utilizando frecuentemente el operador de propagación pueden resultar un tanto desconcertantes inicialmente. Si es así, te sugiero que sigas nuevamente la secuencia de acciones descritas, pero esta vez con papel y un bolígrafo en la mano para no perderte.
+Aunque las secuencias de acciones de las funciones `DESCOPLAR()` y `ACOPLAR()` no dejan de ser lógicas, lo cierto es que las estrategias de manipulación de vectores bidimensionales y conjuntos desarrolladas, que utilizan frecuentemente el operador de propagación para transformar elementos iterables en vectores y realizar operaciones de concatenación, pueden resultar un tanto desconcertantes inicialmente. Si es así, te sugiero que sigas nuevamente la secuencia de acciones descritas paso a paso, pero esta vez con papel y un bolígrafo en la mano para no perderte.
 
 # Mejoras
 
