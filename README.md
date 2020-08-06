@@ -379,7 +379,7 @@ intervalo.forEach(fila => {
 });
 ```
 
-**Paso \[2-i\]**. Usamos el método `.filter` sobre el vector de filas del intervalo para procesar de manera agrupada las que tengan una misma clave única.
+**Paso \[2-i\]**. Usamos el método `.filter` sobre el vector de filas del intervalo para procesar de manera agrupada las que presenten una misma clave única.
 
 ```javascript
 // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
@@ -426,9 +426,13 @@ for (let clave of entidadesClave) {
 return encabezado.map ? [encabezado, ...intervaloAcoplado] : intervaloAcoplado;
 ```
 
-Aunque las secuencias de acciones de las funciones `DESCOPLAR()` y `ACOPLAR()` no dejan de ser lógicas, lo cierto es que las estrategias de manipulación de vectores bidimensionales y conjuntos desarrolladas, que utilizan frecuentemente el operador de propagación para transformar elementos iterables en vectores y realizar operaciones de concatenación, pueden resultar un tanto desconcertantes inicialmente. Si es así, te sugiero que sigas nuevamente la secuencia de acciones descritas paso a paso, pero esta vez con papel y un bolígrafo en la mano para no perderte.
+Aunque el proceso secuencial de las funciones `DESCOPLAR()` y `ACOPLAR()` no deja de ser lógico, lo cierto es que las estrategias utilizadas para manipular vectores bidimensionales y conjuntos, que utilizan frecuentemente el operador de propagación para transformar elementos iterables en vectores y realizar operaciones de concatenación, pueden resultar un tanto desconcertantes inicialmente. Si es así, te sugiero que trates de seguir nuevamente las secuencias descritas paso a paso, pero esta vez con papel y un bolígrafo en la mano para no perderte.
 
 # Mejoras
+
+Ambas funciones evitan los valores duplicados tanto en el proceso de combinación como en el de desagrupación de filas. Tal vez podría resultar de utilidad introducir un parámetro adicional en ambas para permitir la existencia de esos duplicados, aunque personalmente no acabo de apreciar en qué circunstancias eso sería conveniente.
+
+Queda por tanto como ejercicio de ampliación, que seguramente requerirá del uso de vectores en lugar de los conjuntos actuales en aquellos fragmentos del código que se ocupan de la gestión de los valores múltiples en la columnas seleccionadas por el usuario.
 
 # **Licencia**
 
