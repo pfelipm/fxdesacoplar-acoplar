@@ -193,7 +193,7 @@ return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacop
 
 Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento es la siguiente:
 
-1.  Se recorre una a una cada fila del intervalo mediante un bucle `.forEach` (líneas 48 - 121). 
+1.  Se recorre una a una cada fila del intervalo mediante un bucle `.forEach` (líneas 48 - 121).
 2.  Se genera una estructura matricial que contiene los valores múltiples únicos de las columnas que deben desacoplarse (50 - 61).
 3.  A partir de la estructura matricial anterior se genera una nueva en la que se realizan todas las combinaciones posibles entre los valores extraídos de cada una de las columnas (63 - 94). Esta es la parte más densa del código o probablemente la menos comprensible, de entrada, ya que se ha implementado con una función recursiva, que se invoca a sí misma al ser declarada en plan IIFE (_immediately invoked function expression_). Por cierto, información jugosa sobre las IIFE [aquí](https://gustavodohara.com/blogangular/todos-los-misterios-iife-immediately-invoked-function-expressions/).
 4.  Por último, a partir de los valores de la fila original se generan tantas copias como combinaciones posibles se hayan generado en (3), completando datos con los procedentes de las columnas que no se han desacoplado.
@@ -202,7 +202,7 @@ Para entender mejor lo que sigue, permíteme retomar el ejemplo con el que se in
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-Hagamos zoom :mag:  sobre **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.spli`t y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
+Hagamos zoom :mag: sobre **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.spli`t y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
 
 ```javascript
 // Enumerar los valores únicos en cada columna que se ha indicado contiene datos múltiples
@@ -235,7 +235,7 @@ Para conseguirlo, se declara y ejecuta en el mismo momento la función `combinar
 
 ```
 let combinaciones = (function combinar(vector) {
- 
+
 /* Aquí el resto del código de la función */
 
 })(opciones);
@@ -245,30 +245,30 @@ La función `combinar()` emplea una estrategia recursiva para reducir la complej
 
 ```javascript
 if (vector.length == 1) {
-       
+
   // Fin del proceso recursivo
-       
+
   return vector[0];
 }
 ```
 
 De no ser así nos encontraremos en el _caso general_, donde se realiza la reducción de complejidad del problema, descabezando el vector de `opciones` para invocar de nuevo la función recursiva con el conjunto de opciones reducido. A medida que se va deshaciendo la recursión, partiendo del caso base, se "monta" el vector `resultado` generando todas las posibles combinaciones en cada etapa de la recursión por medio de sendos `.forEach`, de nuevo acompañados por nuestro ineludible operador (`...`), que ahora usamos para concatenar los elementos de `subvector` y `subresultado`.
 
-```
+```javascript
 else {
-       
+
   // El resultado se calcula recursivamente
-       
+
   let resultado = [];
   let subvector = vector.splice(0, 1)[0];
   let subresultado = combinar(vector);
-     
+
   // Composición de resultados en la secuencia recursiva >> generación de vector de combinaciones
-       
+
   subvector.forEach(e1 => subresultado.forEach(e2 => resultado.push([e1, ...e2])));
-     
+
   return resultado;
-  
+
 }
 ```
 
