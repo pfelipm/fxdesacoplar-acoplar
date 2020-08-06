@@ -14,13 +14,13 @@ Este repositorio contiene el código Apps Script necesario para implementar las 
 
 **Separar filas con respuestas múltiples**
 
-La función `DESACOPLAR` recorre todas las filas de un intervalo de datos, que se facilita como parámetro de entrada, generando tantas copias consecutivas de cada una de dichas filas como sean necesarias para separar los datos delimitados por la secuencia de caracteres facilitada que se encuentren almacenados en las columnas indicadas por el usuario. Resulta ideal (y de hecho creo con esta finalidad) para para facilitar el tratamiento estadístico de las respuestas a un formulario cuando alguna de sus preguntas admite múltiples opciones (casillas de verificación), que en ese caso aparecen separadas por la secuencia delimitadora `,` . Tras ser desacopladas, las respuestas (filas) con opciones múltiples se repiten en el intervalo resultante para cada combinación posible de los valores múltiples únicos de las columnas especificadas.
+La función `DESACOPLAR()` recorre todas las filas de un intervalo de datos, que se facilita como parámetro de entrada, generando tantas copias consecutivas de cada una de dichas filas como sean necesarias para separar los datos delimitados por la secuencia de caracteres facilitada que se encuentren almacenados en las columnas indicadas por el usuario. Resulta ideal (y de hecho creo con esta finalidad) para para facilitar el tratamiento estadístico de las respuestas a un formulario cuando alguna de sus preguntas admite múltiples opciones (casillas de verificación), que en ese caso aparecen separadas por la secuencia delimitadora `,` . Tras ser desacopladas, las respuestas (filas) con opciones múltiples se repiten en el intervalo resultante para cada combinación posible de los valores múltiples únicos de las columnas especificadas.
 
 Veamos un ejemplo en el que se muestran inicialmente las respuestas recibidas en la hoja de cálculo asociada a un formulario de Google utilizado en un proceso de inscripción a una serie de actividades de formación:
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom, Edpuzzle, Sites</td><td>Mañana, Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle, Sites</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom, Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-Como se puede apreciar, las columnas **Curso** y **Turno** contiene valores múltiples, separados por _coma espacio_, habituales cuando se utilizan preguntas a las que se puede responder marcando casillas de verificación. Veamos ahora cuál sería el resultado cuando se aplica la función `DESACOPLAR` sobre el intervalo anterior y las mencionadas columnas:
+Como se puede apreciar, las columnas **Curso** y **Turno** contiene valores múltiples, separados por _coma espacio_, habituales cuando se utilizan preguntas a las que se puede responder marcando casillas de verificación. Veamos ahora cuál sería el resultado cuando se aplica la función `DESACOPLAR()` sobre el intervalo anterior y las mencionadas columnas:
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Prieto González, Isabel</td><td>Edpuzzle</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Hidalgo Iglesias, Pedro</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Classroom</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Edpuzzle</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Edpuzzle</td><td>Tarde</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Sánchez Santana, María</td><td>Sites</td><td>Tarde</td><td>Online</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Moya González, Manuel</td><td>Edpuzzle</td><td>Tarde</td><td>Presencial</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Classroom</td><td>Mañana</td><td>Online</td></tr><tr><td>Carmona Navarro, Juan Carlos</td><td>Sites</td><td>Mañana</td><td>Online</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Mañana</td><td>Presencial</td></tr><tr><td>Medina Márquez, Gloria</td><td>Classroom</td><td>Tarde</td><td>Presencial</td></tr></tbody></table>
 
@@ -91,7 +91,7 @@ Las funciones, `DESACOPLAR` y `ACOPLAR` estarán en breve disponibles en mi comp
 
 Como de costumbre, repasemos algunas cosillas relativas a la implementación.
 
-`DESACOPLAR` y `ACOPLAR` son sendas funciones personalizadas para hojas de cálculo de Google creadas usando Apps Script y, como tales, tienen una estructura y un _modus operandi_ particulares que ya comenté con cierto detenimiento hablando de la implementación de otra función que he desarrollado recientemente, `mediamovil`. En particular, puedes revisar [esta sección](https://github.com/pfelipm/mediamovil/blob/master/README.md#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n) de su documentación si no estás muy familiarizado con el modo en que:
+`DESACOPLAR()` y `ACOPLAR()` son sendas funciones personalizadas para hojas de cálculo de Google creadas usando Apps Script y, como tales, tienen una estructura y un _modus operandi_ particulares que ya comenté con cierto detenimiento hablando de la implementación de otra función que he desarrollado recientemente, `MEDIAMOVIL()`. En particular, puedes revisar [esta sección](https://github.com/pfelipm/mediamovil/blob/master/README.md#mirando-bajo-el-cap%C3%B3-gear-implementaci%C3%B3n) de su documentación si no estás muy familiarizado con el modo en que:
 
 *   Se disponen los elementos de la ayuda contextual por medio de [JSDoc](https://jsdoc.app/about-getting-started.html).
 *   Se gestionan los parámetros de entrada, en general, y los opcionales, en particular.
@@ -125,7 +125,7 @@ function DESACOPLAR(intervalo, encabezado = 'true', separador = ', ', columna, .
 
 Pues no lo hemos hecho porque este tipo de declaraciones esconde una trampa, y la trampa es que no es posible utilizar el punto y coma para "pasar" al siguiente parámetro, obviando su declaración explícita, de modo que se adopte el valor indicado por defecto. ¿Y eso por qué? Porque en ese caso lo que se le pasa realmente a la función es una cadena vacía. Y una cadena vacía no es lo mismo que nada.
 
-Por ejemplo, de haber declarado `DESACOPLAR` del modo indicado justo arriba, al hacer:
+Por ejemplo, de haber declarado `DESACOPLAR()` del modo indicado justo arriba, al hacer:
 
 ```
 =DESACOPLAR( A1:D4 ; ; ; 2 )
@@ -168,14 +168,14 @@ Avancemos un poco, justo debajo del bloque de gestión de parámetros nos encont
 
 ```javascript
 // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas con valores múltiples
-   
+
 let colSet = new Set();
 columnas.forEach(col => colSet.add(col - 1));
 ```
 
 JavaScript dispone de dos estructuras de datos extremadamente interesantes: los mapas (**map**) y los conjuntos (**set**). Se trata de colecciones iterables similares a los vectores, pero con ciertas particularidades que los hacen preferibles a estos últimos en determinadas circunstancias. Por ejemplo, lo bueno que tienen los conjuntos es que evitan por su propia naturaleza la inserción de datos duplicados, y además lo hacen mediante una estrategia interna basadas en _tablas hash_ que resulta extremadamente eficiente, hablamos de algo como **O(1)**, probablemente mucho más de lo que tu implementación basada en vectores, en la que se comprobara la existencia de cada elemento antes de su inserción, alcanzaría. Por cierto, si quieres saber más sobre vectores y conjuntos, no dejes de leer [esto](https://medium.com/front-end-weekly/es6-set-vs-array-what-and-when-efc055655e1a).
 
-El caso es que verás que en el código de estas dos funciones personalizadas se hace un uso insistente de los conjuntos. En el fragmento de código anterior, por ejemplo, se utiliza uno para eliminar posibles elementos duplicados en la indicación de las columnas con valores múltiples por parte de un usuario posiblemente despistado: simplemente se van metiendo los parámetros que identifican las columnas en él (restando 1 por aquello de que los arrays JavaScript comienzan en 0, como ya sabemos). Así de fácil.
+El caso es que verás que en el código de estas dos funciones personalizadas se hace un uso insistente de los conjuntos. En el fragmento de código anterior, por ejemplo, se utiliza uno para eliminar posibles elementos duplicados en la indicación de las columnas con valores múltiples por parte de un usuario posiblemente despistado: simplemente se van metiendo los parámetros que identifican las columnas en él (restando 1 por aquello de que los arrays JavaScript comienzan en 0, como ya sabemos). Así de fácil. Este conjunto (`colSet`) será utilizado más abajo en el meollo del trabajo que realiza la función.
 
 Ya solo queda contemplar la posibilidad de que exista una fila de encabezado en el intervalo de datos a procesar, que se colocará en su sitio justo antes de que la función devuelva el intervalo ya desacoplado. Sí, otra vez el operador de desestructuración, en este caso para [concatenar vectores](https://twitter.com/pfelipm/status/1279056400476524545).
 
@@ -183,20 +183,98 @@ Ya solo queda contemplar la posibilidad de que exista una fila de encabezado en 
 // Listos para comenzar
 
 if (encabezado) encabezado = intervalo.shift();
- 
+
 /* Aquí el resto del código de la función */
- 
+
 // Si hay fila de encabezados, colocar en 1ª posición en la matriz de resultados
 
 return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacoplado;
 ```
 
-Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento es la siguientes:
+Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento es la siguiente:
 
-1.  Se recorre una a una cada fila del intervalo.
-2.  Se construye un conjunto 
+1.  Se recorre una a una cada fila del intervalo mediante un bucle `.forEach` (líneas 48 - 121). 
+2.  Se genera una estructura matricial que contiene los valores múltiples únicos de las columnas que deben desacoplarse (50 - 61).
+3.  A partir de la estructura matricial anterior se genera una nueva en la que se realizan todas las combinaciones posibles entre los valores extraídos de cada una de las columnas (63 - 94). Esta es la parte más densa del código o probablemente la menos comprensible, de entrada, ya que se ha implementado con una función recursiva, que se invoca a sí misma al ser declarada en plan IIFE (_immediately invoked function expression_). Por cierto, información jugosa sobre las IIFE [aquí](https://gustavodohara.com/blogangular/todos-los-misterios-iife-immediately-invoked-function-expressions/).
+4.  Por último, a partir de los valores de la fila original se generan tantas copias como combinaciones posibles se hayan generado en (3), completando datos con los procedentes de las columnas que no se han desacoplado.
 
-**wip**
+Para entender mejor lo que sigue, permíteme retomar el ejemplo con el que se iniciaba este documento, aunque con ligeras modificaciones en los datos para que lo que sigue resulte más clarificador. Supongamos que nuestra función está procesando esta fila y le hemos indicado que debe desacoplar los datos de las columnas 2 (**Curso**) y 3 (**Turno**):
+
+<table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
+
+Hagamos zoom :mag:  sobre **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.spli`t y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
+
+```javascript
+// Enumerar los valores únicos en cada columna que se ha indicado contiene datos múltiples
+
+let opciones = [];
+for (let col of colSet) {
+
+  // Eliminar opciones duplicadas, si las hay, en cada columna gracias al uso de un nuevo conjunto
+
+  let opcionesSet = new Set();
+  String(fila[col]).split(separador).forEach(opcion => opcionesSet.add(opcion)); // split solo funciona con string, convertimos números
+  opciones.push([...opcionesSet]); // también opciones.push(Array.from(opcionesSet))
+
+}              
+```
+
+Al terminar, partiendo de nuestro ejemplo, nos encontraríamos esto:
+
+```javascript
+opciones = [  [ 'Classroom' , 'EdPuzzle' ] , [ 'Mañana , 'Tarde' ]  ]
+```
+
+A continuación viene la parte más complicada, en **\[3\]**. Básicamente, el código de este bloque masticará el vector `opciones` y devolverá esto:
+
+```javascript
+combinaciones = [  [ 'Classroom' , 'Mañana' ] ,  [ 'Classroom' , 'Tarde' ] , [ 'EdPuzzle' , 'Mañana' ] ,  [ 'EdPuzzle' , 'Tarde' ]  ]
+```
+
+Para conseguirlo, se declara y ejecuta en el mismo momento la función `combinar()` . Aunque las IIFE pueden resultar enigmáticas, en este caso me pareció buena idea utilizar una de ellas para evitar la declaración de una función externa a `desacoplar()`, poco adecuado desde el punto de vista de la organización del código.
+
+```
+let combinaciones = (function combinar(vector) {
+ 
+/* Aquí el resto del código de la función */
+
+})(opciones);
+```
+
+La función `combinar()` emplea una estrategia recursiva para reducir la complejidad del problema de combinar los elementos de n vectores. El _caso base_ se da cuando hemos alcanzado la última columna a combinar, esto es, el último elemento del vector `opciones`. Recuerda que cada uno de estos elementos es a su vez un vector que contiene los valores múltiples extraídos de la columna correspondiente de la fila que estamos procesando. En este caso la función simplemente devuelve el vector de valores múltiples de la columna, siguiendo con nuestro ejemplo `[ 'Mañana' , 'Tarde' ]`.
+
+```javascript
+if (vector.length == 1) {
+       
+  // Fin del proceso recursivo
+       
+  return vector[0];
+}
+```
+
+De no ser así nos encontraremos en el _caso general_, donde se realiza la reducción de complejidad del problema, descabezando el vector de `opciones` para invocar de nuevo la función recursiva con el conjunto de opciones reducido. A medida que se va deshaciendo la recursión, partiendo del caso base, se "monta" el vector `resultado` generando todas las posibles combinaciones en cada etapa de la recursión por medio de sendos `.forEach`, de nuevo acompañados por nuestro ineludible operador (`...`), que ahora usamos para concatenar los elementos de `subvector` y `subresultado`.
+
+```
+else {
+       
+  // El resultado se calcula recursivamente
+       
+  let resultado = [];
+  let subvector = vector.splice(0, 1)[0];
+  let subresultado = combinar(vector);
+     
+  // Composición de resultados en la secuencia recursiva >> generación de vector de combinaciones
+       
+  subvector.forEach(e1 => subresultado.forEach(e2 => resultado.push([e1, ...e2])));
+     
+  return resultado;
+  
+}
+```
+
+Sí, las secuencias recursivas parecen resolver en ocasiones problemas complejos sin esfuerzo, casi casi automágicamente. Y aunque siempre pueden transformarse en iterativas, normalmente más eficientes, resultan tan elegantes que en este caso me vas a permitir que no lo haga.
+
+**...WIP...**
 
 # Mejoras
 
