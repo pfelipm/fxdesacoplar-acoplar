@@ -73,9 +73,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
         
         // Fin del proceso recursivo
         
-        let resultado = [];
-        vector[0].forEach(opcion => resultado.push([opcion]));
-        return resultado;
+        return vector[0];
       }
       
       else {
@@ -86,7 +84,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
         let subvector = vector.splice(0, 1)[0];
         let subresultado = combinar(vector);
       
-        // Composición de resultados en la secuencia recursiva >> generacíón de vector de combinaciones
+        // Composición de resultados en la secuencia recursiva >> generación de vector de combinaciones
         
         subvector.forEach(e1 => subresultado.forEach(e2 => resultado.push([e1, ...e2])));
       
