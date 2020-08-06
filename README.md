@@ -329,17 +329,17 @@ El bloque de control de parámetros es prácticamente idéntico, aunque en este 
 
 ```javascript
 // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas CLAVE
-   
+
 let colSet = new Set();
 columnas.forEach(col => colSet.add(col - 1));
- 
+
 // ...y en este conjunto se identifican las columnas susceptibles de contener valores que deben concatenarse
- 
+
 let colNoClaveSet = new Set();
 for (let col = 0; col < intervalo[0].length; col++) {
- 
+
   if (!colSet.has(col)) colNoClaveSet.add(col);
- 
+
 }
 ```
 
@@ -349,68 +349,84 @@ Tomaremos las mismas precauciones por lo que hace a la existencia (o no) de una 
 if (encabezado) encabezado = intervalo.shift();
 ```
 
-La estrategia de `ACOPLAR()` es la siguiente:
+La estrategia que sigue `ACOPLAR()` es la siguiente:
 
 1.  Se recorren todas las filas del intervalo de datos para extraer las claves principales. El intervalo de datos resultado contendrá tantas filas diferenciadas como claves únicas identificadas (líneas 179 - 191 en el código fuente de la función).
 2.  Para cada clave única (193 - 224):
     1.  Se obtienen todas las filas en las que está presente dicha clave.
     2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (207 - 215).
-    3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (217 -  222).
+    3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (217 - 222).
+
+**Paso \[1\]**. A destacar el uso de un carácter delimitador (`/`)cuando se concatenan los valores de las distintas columnas de tipo clave para evitar falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
 
 ```javascript
 // Listos para comenzar
- 
+
 if (encabezado) encabezado = intervalo.shift();
- 
+
 let intervaloAcoplado = [];
 
 // 1ª pasada: recorremos el intervalo fila a fila para identificar entidades (concatenación de columnas clave) únicas
- 
+
 let entidadesClave = new Set();
 intervalo.forEach(fila => {
-   
-  let clave = '';                
-  // Se utiliza delimitador de campo (-) para minimizar confusiones (Ej: claves: col1 = 'pablo', col3 = '1' / col1 = 'pablo1', col3 = '')
-  for (let col of colSet) {clave += '-' + String(fila[col]);}
-  entidadesClave.add(clave);
-                   
-});
 
+  let clave = '';                
+  // Se utiliza delimitador de campo (/) para evitar confusiones (Ej: claves: col1 = 'pablo', col3 = '1' / col1 = 'pablo1', col3 = '')
+  for (let col of colSet) {clave += '/' + String(fila[col]);}
+  entidadesClave.add(clave);
+
+});
+```
+
+**Paso \[2-i\]**. Usamos el método `.filter` sobre el vector de filas del intervalo para procesar de manera agrupada las que tengan una misma clave única. 
+
+```javascript
 // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
 
 for (let clave of entidadesClave) {
 
   let filasEntidad = intervalo.filter(fila => {
-   
-    let claveActual = '';
-    for (let col of colSet) {claveActual += '-' + String(fila[col]);}
-    return clave == claveActual;
-   
-  });
 
+    let claveActual = '';
+    for (let col of colSet) {claveActual += '/' + String(fila[col]);}
+    return clave == claveActual;
+
+  });
+```
+
+**Paso \[2-ii\]**. Se crea un vector con tantos conjuntos (una vez más se evitan así valores duplicados) como columnas de tipo no clave para contener los valores múltiples únicos en ellas asociados a cada entidad (fila) diferenciada, que como sabemos está caracterizada por una clave única.
+
+```javascript
   // Acoplar todas las filas de cada entidad, concatenando valores en columnas no-clave con separador indicado
 
   let filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
   let noClaveSets = [];
   for (let col = 0; col < colNoClaveSet.size; col++) {noClaveSets.push(new Set())}; // Vector de sets para recoger valores múltiples  
   filasEntidad.forEach(fila => {
-     
+
     let conjunto = 0;  
     for (let col of colNoClaveSet) {noClaveSets[conjunto++].add(String(fila[col]));}
-                           
-  });
 
+  });
+```
+
+**Paso \[2-iii\]**. Ahora se construye la fila canónica que representa a todas las que contienen la misma clave única integrando las columnas clave con los valores múltiples extraídos de las que no lo son, concatenados utilizando la secuencia de caracteres delimitadora. Y, finalmente, tras repetir el proceso con la totalidad de claves únicas, la función devuelve la matriz resultado. 
+
+```javascript
   // Set >> Vector >> Cadena única con separador
 
   conjunto = 0;
   for (let col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
 
   intervaloAcoplado.push(filaAcoplada);
- 
+
 }
 
 return encabezado.map ? [encabezado, ...intervaloAcoplado] : intervaloAcoplado;
 ```
+
+Aunque la secuencia de acciones de ambas funciones, `DESCOPLAR()` y `ACOPLAR()`, no deja de ser lógica, lo cierto es que las operaciones de manipulación de vectores bidimensionales y conjuntos, utilizando frecuentemente el operador de propagación pueden resultar un tanto desconcertantes inicialmente. Si es así, te sugiero que sigas nuevamente la secuencia de acciones descritas, pero esta vez con papel y un bolígrafo en la mano para no perderte.
 
 # Mejoras
 
