@@ -154,7 +154,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
   ...
 
-  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas];
+  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas].sort() : [...masColumnas].sort();
   if (columnas.length == 0) throw 'No se han indicado columnas a descoplar.';
   if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas deben indicarse mediante números enteros';
   if (Math.max(...columnas) > intervalo[0].length) throw 'Al menos una columna está fuera del intervalo.';
@@ -162,7 +162,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
 Al diseñar estas funciones me pareció buena idea permitir que el usuario pudiera especificar un número indefinido de columnas. Esto lo conseguimos utilizando el (bendito) **operador de propagación** de ES6 (`...`), que aquí viene a significar algo así como "y todo lo que venga detrás". En este caso, los valores cardinales del resto de columnas pasadas como parámetro se reciben dentro del vector `masColumnas`, que viene a ser algo así como un coche escoba para **el** **resto** de parámetros. Comodísimo, oiga. Y decía hace un momento lo de _bendito_ porque antes de ES6 teníamos con andarnos con [saltos mortales hacia atrás](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) com el objeto `arguments` para resolver esto de manera más o menos satisfactoria.
 
-Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (de columnas) que integra tanto el parámetro `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una.
+Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (ordenado, esto es necesario para que secciones posteriores del código funcionen correctamente) que integra tanto el parámetro `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una, bien a través de `columna`, bien en `masColumnas`. 
 
 En mi opinión, dominar el operador de propagación y saber emplear las denominadas _asignaciones desestructurantes_ (¡menudo palabro!) son aspectos fundamentales para hablar un JavaScript elegante. Si estas cosas te suenan un poco (o un mucho) a chino, te recomiendo una leída atenta (y probablemente reiterada) a este [excelente artículo](https://codeburst.io/a-simple-guide-to-destructuring-and-es6-spread-operator-e02212af5831).
 
@@ -197,10 +197,10 @@ return encabezado.map ? [encabezado, ...intervaloDesacoplado] : intervaloDesacop
 
 Ya solo nos queda pegarle un vistazo a ese "resto del código de la función". La estrategia que se sigue para realizar el proceso de desacoplamiento se desarrolla de acuerdo con esta secuencia de cuatro pasos:
 
-1.  Se recorre una a una cada fila del intervalo (líneas 48 - 121 en el código fuente de la función).
+1.  Se recorre una a una cada fila del intervalo (líneas 48 - 123 en el código fuente de la función).
 2.  Se genera una estructura matricial que contiene los valores múltiples únicos de las columnas que deben desacoplarse (52 - 61).
-3.  A partir de la estructura matricial anterior se genera una nueva en la que se realizan todas las combinaciones posibles entre los valores extraídos de cada una de las columnas (63 - 94). Esta es la parte más densa del código o probablemente la menos comprensible, de entrada, ya que se ha implementado con una función recursiva, que se invoca a sí misma al ser declarada en plan IIFE (_immediately invoked function expression_). Por cierto, información jugosa sobre las IIFE [aquí](https://gustavodohara.com/blogangular/todos-los-misterios-iife-immediately-invoked-function-expressions/).
-4.  Por último, a partir de los valores de la fila original se generan tantas copias como combinaciones posibles se hayan generado en (3), completando datos con los procedentes de las columnas que no se han desacoplado y se guardan en la matriz resultado que devolverá la función (101 - 119).
+3.  A partir de la estructura matricial anterior se construye una nueva en la que se generan todas las combinaciones posibles entre los valores extraídos de cada una de las columnas (70 - 96). Esta es la parte más densa del código o probablemente la menos comprensible, de entrada, ya que se ha implementado con una función recursiva, que se invoca a sí misma al ser declarada en plan IIFE (_immediately invoked function expression_). Por cierto, información jugosa sobre las IIFE [aquí](https://gustavodohara.com/blogangular/todos-los-misterios-iife-immediately-invoked-function-expressions/).
+4.  Por último, a partir de los valores de la fila original se generan tantas copias como combinaciones posibles se hayan producido en (3), completando datos con los procedentes de las columnas que no se han desacoplado y se guardan en la matriz resultado que devolverá la función (103 - 121).
 
 Para entender mejor lo que sigue, permíteme retomar el ejemplo con el que se iniciaba este documento, aunque con ligeras modificaciones en los datos para que lo que sigue resulte más clarificador. Supongamos que nuestra función está procesando esta fila y le hemos indicado que debe desacoplar los datos de las columnas 2 (**Curso**) y 3 (**Turno**):
 
@@ -245,14 +245,16 @@ let combinaciones = (function combinar(vector) {
 })(opciones);
 ```
 
-La función `combinar()` emplea una estrategia recursiva para reducir la complejidad del problema de combinar los elementos, en número indeterminado, de n vectores. El _caso base_ se da cuando hemos alcanzado la última columna a combinar, esto es, el último elemento del vector `opciones`. Recuerda que cada uno de estos elementos es a su vez un vector que contiene los valores múltiples extraídos de la columna correspondiente de la fila que estamos procesando. En este caso final, la función simplemente devuelve el vector de valores múltiples de la columna, siguiendo con nuestro ejemplo sería `[ 'Mañana' , 'Tarde' ]`.
+La función `combinar()` emplea una estrategia recursiva para reducir la complejidad del problema de combinar los elementos, en número indeterminado, de n vectores. El _caso base_ se da cuando hemos alcanzado la última columna a combinar, esto es, el último elemento del vector `opciones`. Recuerda que cada uno de estos elementos es a su vez un vector que contiene los valores múltiples extraídos de la columna correspondiente de la fila que estamos procesando. En este caso final, la función simplemente devuelve un vector cuyo único elemento es a su vez el vector de valores múltiples de la columna, siguiendo con nuestro ejemplo sería `[ ['Mañana'] , ['Tarde'] ]`.
 
 ```javascript
 if (vector.length == 1) {
 
   // Fin del proceso recursivo
-
-  return vector[0];
+  
+  let resultado = [];
+  vector[0].forEach(opcion => resultado.push([opcion]));
+  return [vector[0]];
 }
 ```
 
@@ -278,7 +280,7 @@ else {
 
 Se _descabeza_ el vector `opciones` y se invoca de nueva `combinar()` con los elementos que quedan. A medida que se va deshaciendo la recursión, partiendo del caso base y de "abajo a arriba", se va montando el vector `resultado`, generando todas las posibles combinaciones de los elementos devueltos por la última llamada a la función recursiva y los que forman parte del elemento descabezado en cada etapa de la recursión por medio de sendos `.forEach`, de nuevo acompañados por nuestro ineludible operador (`...`), que ahora usamos para concatenar los elementos de `subvector` y `subresultado`.
 
-![(Des)Acoplar # diagrama recursión](https://user-images.githubusercontent.com/12829262/89544729-c7b0ac00-d802-11ea-849b-c734c9f1116c.png)
+![(Des)Acoplar # diagrama recursión](https://user-images.githubusercontent.com/12829262/89643778-c80a7f00-d8b6-11ea-93b7-e0f5ceb9d3f3.png)
 
 Sí, las secuencias recursivas en ocasiones resuelven problemas complejos sin esfuerzo aparente. Y aunque siempre pueden transformarse en iterativas, lo que normalmente se traduce en algoritmos más eficientes, resultan tan naturales y elegantes que en este caso me vas a permitir que no lo haga.
 
@@ -351,11 +353,11 @@ if (encabezado) encabezado = intervalo.shift();
 
 La estrategia que sigue `ACOPLAR()` es la siguiente:
 
-1.  Se recorren todas las filas del intervalo de datos para extraer las claves principales. El intervalo de datos resultado contendrá tantas filas diferenciadas como claves únicas identificadas (líneas 179 - 191 en el código fuente de la función).
-2.  Para cada clave única (193 - 224):
-    1.  Se obtienen todas las filas en las que está presente dicha clave.
-    2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (207 - 215).
-    3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (217 - 222).
+1.  Se recorren todas las filas del intervalo de datos para extraer las claves principales. El intervalo de datos resultado contendrá tantas filas diferenciadas como claves únicas identificadas (líneas 181 - 193 en el código fuente de la función).
+2.  Para cada clave única (197 - 226):
+    1.  Se obtienen todas las filas en las que está presente dicha clave (199 - 205).
+    2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (209 - 217).
+    3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (221 - 224).
 
 **Paso \[1\]**. A destacar el uso de un carácter delimitador (`/`)cuando se concatenan los valores de las distintas columnas de tipo clave para evitar falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
 
