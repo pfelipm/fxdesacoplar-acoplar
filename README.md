@@ -10,7 +10,7 @@
 
 # (Des)acoplando las filas de un intervalo de datos
 
-Este repositorio contiene el código Apps Script necesario para implementar las funciones personalizadas para hojas de cálculo de Google `DESACOPLAR` y `ACOPLAR`. Encontrarás una motivación más detallada acerca de su utilidad en este artículo introductorio.
+Este repositorio contiene el código Apps Script necesario para implementar las funciones personalizadas para hojas de cálculo de Google `DESACOPLAR()` y `ACOPLAR()`. Encontrarás una motivación más detallada acerca de su utilidad en este [artículo introductorio](https://pablofelip.online/desacoplar-acoplar/).
 
 ### **Separar filas con respuestas múltiples**
 
