@@ -27,7 +27,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
   if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas.';
   separador = separador || ', ';
   if (typeof separador != 'string') throw 'El separador no es del tipo correcto.';
-  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas];
+  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas].sort() : [...masColumnas].sort();
   if (columnas.length == 0) throw 'No se han indicado columnas a descoplar.';
   if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas deben indicarse mediante números enteros';
   if (Math.max(...columnas) > intervalo[0].length) throw 'Al menos una columna está fuera del intervalo.';
@@ -58,8 +58,8 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
        String(fila[col]).split(separador).forEach(opcion => opcionesSet.add(opcion)); // split solo funciona con string, convertimos números
        opciones.push([...opcionesSet]); // también opciones.push(Array.from(opcionesSet))
     
-    }                  
-    
+    }
+      
     // Ahora desacoplamos la respuesta (fila) mediante una IIFE recursiva 🔄
     // que genera un vector para todas las posibles combinaciones (vectores) de respuestas
     // de las columnas con valores múltiples
@@ -73,7 +73,9 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
         
         // Fin del proceso recursivo
         
-        return vector[0];
+        let resultado = [];
+        vector[0].forEach(opcion => resultado.push([opcion]));
+        return resultado;
       }
       
       else {
@@ -153,7 +155,7 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
   if (intervalo.length == 1 && encabezado) throw 'El intervalo es demasiado pequeño, añade más filas.';
   separador = separador || ', ';
   if (typeof separador != 'string') throw 'El separador no es del tipo correcto.';
-  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas] : [...masColumnas];
+  let columnas = typeof columna != 'undefined' ? [columna, ...masColumnas].sort() : [...masColumnas].sort();
   if (columnas.length == 0) throw 'No se han indicado columnas clave.';
   if (columnas.some(col => typeof col != 'number' || col < 1)) throw 'Las columnas clave deben indicarse mediante números enteros';
   if (Math.max(...columnas) > intervalo[0].length) throw 'Al menos una columna clave está fuera del intervalo.';
@@ -188,7 +190,7 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     for (let col of colSet) {clave += '/' + String(fila[col]);} 
     entidadesClave.add(clave);
                     
-   });
+  });
 
   // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
 
@@ -226,4 +228,3 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
   return encabezado.map ? [encabezado, ...intervaloAcoplado] : intervaloAcoplado;
   
 }
-  
