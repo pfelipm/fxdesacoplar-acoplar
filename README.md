@@ -162,7 +162,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
 Al diseñar estas funciones me pareció buena idea permitir que el usuario pudiera especificar un número indefinido de columnas. Esto lo conseguimos utilizando el (bendito) **operador de propagación** de ES6 (`...`), que aquí viene a significar algo así como "y todo lo que venga detrás". En este caso, los valores cardinales del resto de columnas pasadas como parámetro se reciben dentro del vector `masColumnas`, que viene a ser algo así como un coche escoba para **el** **resto** de parámetros. Comodísimo, oiga. Y decía hace un momento lo de _bendito_ porque antes de ES6 teníamos con andarnos con [saltos mortales hacia atrás](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) com el objeto `arguments` para resolver esto de manera más o menos satisfactoria.
 
-Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (ordenado, esto es necesario para que secciones posteriores del código funcionen correctamente) que integra tanto el parámetro `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una, bien a través de `columna`, bien en `masColumnas`. 
+Si analizas el código responsable de controlar la corrección de los parámetros que indican las columnas con datos múltiples, comprobarás que lo que se hace no es otra cosa que construir un vector numérico (ordenado, esto es necesario para que secciones posteriores del código funcionen correctamente) que integra tanto el parámetro `columna` como el vector `masColumnas`, verificando que todos sus elementos son numeritos dentro de un rango aceptable. Ah, y si te fijas realmente `columna` no es obligatorio, la única exigencia es que al menos se haya indicado una, bien a través de `columna`, bien en `masColumnas`.
 
 En mi opinión, dominar el operador de propagación y saber emplear las denominadas _asignaciones desestructurantes_ (¡menudo palabro!) son aspectos fundamentales para hablar un JavaScript elegante. Si estas cosas te suenan un poco (o un mucho) a chino, te recomiendo una leída atenta (y probablemente reiterada) a este [excelente artículo](https://codeburst.io/a-simple-guide-to-destructuring-and-es6-spread-operator-e02212af5831).
 
@@ -251,7 +251,7 @@ La función `combinar()` emplea una estrategia recursiva para reducir la complej
 if (vector.length == 1) {
 
   // Fin del proceso recursivo
-  
+
   let resultado = [];
   vector[0].forEach(opcion => resultado.push([opcion]));
   return [vector[0]];
@@ -280,7 +280,7 @@ else {
 
 Se _descabeza_ el vector `opciones` y se invoca de nueva `combinar()` con los elementos que quedan. A medida que se va deshaciendo la recursión, partiendo del caso base y de "abajo a arriba", se va montando el vector `resultado`, generando todas las posibles combinaciones de los elementos devueltos por la última llamada a la función recursiva y los que forman parte del elemento descabezado en cada etapa de la recursión por medio de sendos `.forEach`, de nuevo acompañados por nuestro ineludible operador (`...`), que ahora usamos para concatenar los elementos de `subvector` y `subresultado`.
 
-![(Des)Acoplar # diagrama recursión](https://user-images.githubusercontent.com/12829262/89643778-c80a7f00-d8b6-11ea-93b7-e0f5ceb9d3f3.png)
+![(Des)Acoplar # diagrama recursión](https://docs.google.com/drawings/d/e/2PACX-1vS2zeARNu7Kb0_BOXLPFNeyvKFFwM_zgEKitHTo3sOdZdwSV8bPJd7WNvLWAcFn_cWBZsWjBfvapq16/pub?w=1000&h=600)
 
 Sí, las secuencias recursivas en ocasiones resuelven problemas complejos sin esfuerzo aparente. Y aunque siempre pueden transformarse en iterativas, lo que normalmente se traduce en algoritmos más eficientes, resultan tan naturales y elegantes que en este caso me vas a permitir que no lo haga.
 
