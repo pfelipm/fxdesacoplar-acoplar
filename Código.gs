@@ -11,7 +11,7 @@
  * @param {2} columna Número de orden, desde la izquierda, de la columna dentro del intervalo que contiene valores múltiples a descoplar.
  * @param {4} [más_columnas] Columnas adicionales, opcionales, que contienen valores múltiples a desacoplar, separadas por ";".
  *
- * @returns Intervalo de datos desacoplados
+ * @return Intervalo de datos desacoplados
  *
  * @customfunction
  *
@@ -139,7 +139,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
  * @param {1} columna Número de orden, desde la izquierda, de la columna clave que identifica los datos de la fila como únicos.
  * @param {2} [más_columnas] Columnas clave adicionales, opcionales, que actúan como identificadores únicos, separadas por ";".
  *
- * @returns Intervalo de datos desacoplados
+ * @return Intervalo de datos desacoplados
  *
  * @customfunction
  *
