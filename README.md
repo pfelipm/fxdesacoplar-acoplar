@@ -179,7 +179,7 @@ JavaScript dispone de dos estructuras de datos extremadamente interesantes: los 
 
 El caso es que verás que en el código de estas dos funciones personalizadas se hace un uso insistente de los conjuntos. En el fragmento de código anterior, por ejemplo, se utiliza uno para eliminar posibles elementos duplicados en la indicación de las columnas con valores múltiples por parte de un usuario posiblemente despistado: simplemente se van metiendo los parámetros que identifican las columnas en él (restando 1 por aquello de que los arrays JavaScript comienzan en 0, como ya sabemos). Así de fácil. Este conjunto (`colSet`) será utilizado más abajo en el meollo del trabajo que realiza la función.
 
-Ya solo queda contemplar la posibilidad de que exista una fila de encabezado en el intervalo de datos a procesar, que se colocará en su sitio justo antes de que la función devuelva el intervalo ya desacoplado. Sí, otra vez el operador de desestructuración, en este caso para [concatenar vectores](https://twitter.com/pfelipm/status/1279056400476524545).
+El código debe contemplar la posibilidad de que exista una fila de encabezado en el intervalo de datos a procesar, que se colocará en su sitio justo antes de que la función devuelva el intervalo ya desacoplado, en su caso. Sí, otra vez el operador de desestructuración, en este caso para [concatenar vectores](https://twitter.com/pfelipm/status/1279056400476524545).
 
 ```javascript
 // Listos para comenzar
@@ -359,7 +359,7 @@ La estrategia que sigue `ACOPLAR()` es la siguiente:
     2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (209 - 217).
     3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (221 - 224).
 
-**Paso \[1\]**. A destacar el uso de un carácter delimitador (`/`)cuando se concatenan los valores de las distintas columnas de tipo clave para evitar falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
+**Paso \[1\]**. A destacar el uso de un carácter delimitador (`/`) cuando se concatenan los valores de las distintas columnas de tipo clave para evitar falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
 
 ```javascript
 // Listos para comenzar
