@@ -16,7 +16,7 @@
  * @customfunction
  *
  * MIT License
- * Copyright (c) 2020 Pablo Felip Monferrer(@pfelipm)
+ * Copyright (c) 2020 Pablo Felip Monferrer (@pfelipm)
  */ 
 function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
@@ -144,7 +144,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
  * @customfunction
  *
  * MIT License
- * Copyright (c) 2020 Pablo Felip Monferrer(@pfelipm)
+ * Copyright (c) 2020 Pablo Felip Monferrer (@pfelipm)
  */ 
 function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
