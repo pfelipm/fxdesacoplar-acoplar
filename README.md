@@ -227,7 +227,7 @@ for (let col of colSet) {
 Al terminar, partiendo de nuestro ejemplo, nos encontraríamos esto:
 
 ```javascript
-opciones = [  [ 'Classroom' , 'EdPuzzle' ] , [ 'Mañana , 'Tarde' ]  ]
+opciones = [  [ 'Classroom' , 'EdPuzzle' ] , [ 'Mañana' , 'Tarde' ]  ]
 ```
 
 A continuación viene la parte más complicada, en el **paso** **\[3\]**. Básicamente, el código de este bloque masticará el vector `opciones` anterior y devolverá esto:
