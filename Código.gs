@@ -34,14 +34,14 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
   // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas con valores múltiples
     
-  let colSet = new Set();
+  const colSet = new Set();
   columnas.forEach(col => colSet.add(col - 1));
     
   // Listos para comenzar
   
   if (encabezado) encabezado = intervalo.shift();
   
-  let intervaloDesacoplado = [];
+  const intervaloDesacoplado = [];
   
   // Recorramos el intervalo fila a fila
   
@@ -49,12 +49,12 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
                     
     // Enumerar los valores únicos en cada columna que se ha indicado contiene datos múltiples
          
-    let opciones = []; 
-    for (let col of colSet) {
+    const opciones = []; 
+    for (const col of colSet) {
     
        // Eliminar opciones duplicadas, si las hay, en cada columna gracias al uso de un nuevo conjunto
     
-       let opcionesSet = new Set();
+       const opcionesSet = new Set();
        String(fila[col]).split(separador).forEach(opcion => opcionesSet.add(opcion)); // split solo funciona con string, convertimos números
        opciones.push([...opcionesSet]); // también opciones.push(Array.from(opcionesSet))
     
@@ -67,13 +67,13 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     //     ENTRADA: vector = [ [a, b], [1, 2] ]
     //     SALIDA:  combinaciones = [ [a, 1], [a, 2], [b, 1], [b, 2] ]
   
-    let combinaciones = (function combinar(vector) {
+    const combinaciones = (function combinar(vector) {
     
       if (vector.length == 1) {
         
         // Fin del proceso recursivo
         
-        let resultado = [];
+        const resultado = [];
         vector[0].forEach(opcion => resultado.push([opcion]));
         return resultado;
       }
@@ -82,9 +82,9 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
         
         // El resultado se calcula recursivamente
         
-        let resultado = [];
-        let subvector = vector.splice(0, 1)[0];
-        let subresultado = combinar(vector);
+        const resultado = [];
+        const subvector = vector.splice(0, 1)[0];
+        const subresultado = combinar(vector);
       
         // Composición de resultados en la secuencia recursiva >> generación de vector de combinaciones
         
@@ -100,10 +100,10 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     //     ENTRADA: combinaciones = [ [a, 1], [a, 2], [b, 1], [b, 2] ]
     //     SALIDA:  respuestaDesacoplada = [ [Pablo, a, 1, Tarde], [Pablo, a, 2, Tarde], [Pablo, b, 1, Tarde], [Pablo, b, 2, Tarde] ]
   
-    let respuestaDesacoplada = combinaciones.map(combinacion => {
+    const respuestaDesacoplada = combinaciones.map(combinacion => {
                         
       let colOpciones = 0;
-      let filaDesacoplada = [];
+      const filaDesacoplada = [];
       fila.forEach((valor, columna) => {
       
         // Tomar columna de la fila original o combinación de datos generada anteriormente
@@ -162,12 +162,12 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
   // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas CLAVE
     
-  let colSet = new Set();
+  const colSet = new Set();
   columnas.forEach(col => colSet.add(col - 1));
   
   // ...y en este conjunto se identifican las columnas susceptibles de contener valores que deben concatenarse
   
-  let colNoClaveSet = new Set();
+  const colNoClaveSet = new Set();
   for (let col = 0; col < intervalo[0].length; col++) {
   
     if (!colSet.has(col)) colNoClaveSet.add(col);
@@ -178,14 +178,13 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
   
   if (encabezado) encabezado = intervalo.shift();
   
-  let intervaloAcoplado = [];
+  const intervaloAcoplado = [];
 
   // 1ª pasada: recorremos el intervalo fila a fila para identificar entidades (concatenación de columnas clave) únicas
   
-  let entidadesClave = new Set();
+  const entidadesClave = new Set();
   intervalo.forEach(fila => {
     
-    // let clave = '';                
     const clave = [];
     // ⚠️ A la hora de diferenciar dos entidades únicas (filas) usando una serie de columnas clave:
     //    a) No basta con concatenar los valores de las columnas clave como cadenas y simplemente compararlas. Ejemplo:
@@ -201,28 +200,27 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     //       clave fila 2 → col1 = 'pablo'  col2 = 'felip'   >> Clave compuesta: pablo felip
     //       ✖️ Misma clave compuesta, pero entidades estrictamente diferentes (a menos que espacios anteriores y posteriores no importen)
     // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformada en cadenas JSON.
-    for (let col of colSet) clave.push(String(fila[col])) 
+    for (const col of colSet) clave.push(String(fila[col])) 
     entidadesClave.add(JSON.stringify(clave));
                     
   });
 
   // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
 
-  for (let clave of entidadesClave) {
+  for (const clave of entidadesClave) {
 
-    let filasEntidad = intervalo.filter(fila => {
+    const filasEntidad = intervalo.filter(fila => {
     
       // let claveActual = '';
       const claveActual = [];
-      //for (let col of colSet) {claveActual += '/' + String(fila[col]);}
-      for (let col of colSet) claveActual.push(String(fila[col]));
+      for (const col of colSet) claveActual.push(String(fila[col]));
       return clave == JSON.stringify(claveActual);
      
     });
 
     // Acoplar todas las filas de cada entidad, concatenando valores en columnas no-clave con separador indicado
 
-    let filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
+    const filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
     const noClaveSets = [];
     for (let col = 0; col < colNoClaveSet.size; col++) {noClaveSets.push(new Set())}; // Vector de sets para recoger valores múltiples   
     filasEntidad.forEach(fila => {
@@ -235,7 +233,7 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     // Set >> Vector >> Cadena única con separador
 
     let conjunto = 0;
-    for (let col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
+    for (const col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
 
     intervaloAcoplado.push(filaAcoplada);
   
