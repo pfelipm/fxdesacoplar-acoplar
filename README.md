@@ -374,7 +374,7 @@ const intervaloAcoplado = [];
 const entidadesClave = new Set();
 intervalo.forEach(fila => {
 
-  const clave = '';                
+  const clave = [];                
   // ⚠️ A la hora de diferenciar dos entidades únicas (filas) usando una serie de columnas clave:
   //    a) No basta con concatenar los valores de las columnas clave como cadenas y simplemente compararlas. Ejemplo:
   //       clave fila 1 → col1 = 'pablo' col2 = 'felip'     >> Clave compuesta: pablofelip
