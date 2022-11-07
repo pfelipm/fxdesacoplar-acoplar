@@ -185,10 +185,26 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
   let entidadesClave = new Set();
   intervalo.forEach(fila => {
     
-    let clave = '';                
-    // Se utiliza delimitador de campo (/) para evitar confusiones (Ej: claves: col1 = 'pablo', col3 = '1' / col1 = 'pablo1', col3 = '')
-    for (let col of colSet) {clave += '/' + String(fila[col]);} 
-    entidadesClave.add(clave);
+    // let clave = '';                
+    const clave = [];
+    // ⚠️ A la hora de diferenciar dos entidades únicas (filas) usando una serie de columnas clave:
+    //    a) No basta con concatenar los valores de las columnas clave como cadenas y simplemente compararlas. Ejemplo:
+    //       clave fila 1 → col1 = 'pablo' col2 = 'felip'     >> Clave compuesta: pablofelip
+    //       clave fila 2 → col1 = 'pa'    col2 = 'blofelip'  >> Clave compuesta: pablofelip
+    //       ✖️ Misma clave compuesta, pero entidades diferentes
+    //    b) No basta con con unir los valores de las columnas clave como cadenas utilizando un carácter delimitador. Ejemplo ("/"):
+    //       clave fila 1 → col1 = 'pablo/' col2 = 'felip'    >> Clave compuesta: pablo//felip 
+    //       clave fila 2 → col1 = 'pablo'  col2 = '/felip'   >> Clave compuesta: pablo//felip
+    //       ✖️ Misma clave compuesta, pero entidades diferentes
+    //    c) No es totalmente apropiado eliminar espacios antes y después de valores clave y unirlos usando un espacio delimitador (" "):
+    //       clave fila 1 → col1 = ' pablo' col2 = 'felip'    >> Clave compuesta: pablo felip
+    //       clave fila 2 → col1 = 'pablo'  col2 = 'felip'   >> Clave compuesta: pablo felip
+    //       ✖️ Misma clave compuesta, pero entidades estrictamente diferentes (a menos que espacios anteriores y posteriores no importen)
+    // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformada en cadenas JSON.
+    for (let col of colSet) clave.push(String(fila[col])) 
+    // entidadesClave.add(clave);
+    entidadesClave.add(JSON.stringify(clave));
+
                     
   });
 
@@ -198,16 +214,18 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
     let filasEntidad = intervalo.filter(fila => {
     
-      let claveActual = '';
-      for (let col of colSet) {claveActual += '/' + String(fila[col]);} 
-      return clave == claveActual;
+      // let claveActual = '';
+      const claveActual = [];
+      //for (let col of colSet) {claveActual += '/' + String(fila[col]);}
+      for (let col of colSet) claveActual.push(String(fila[col]));
+      return clave == JSON.stringify(claveActual);
      
     });
 
     // Acoplar todas las filas de cada entidad, concatenando valores en columnas no-clave con separador indicado
 
     let filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
-    let noClaveSets = [];
+    const noClaveSets = [];
     for (let col = 0; col < colNoClaveSet.size; col++) {noClaveSets.push(new Set())}; // Vector de sets para recoger valores múltiples   
     filasEntidad.forEach(fila => {
       
@@ -218,7 +236,7 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
     // Set >> Vector >> Cadena única con separador
 
-    conjunto = 0;
+    let conjunto = 0;
     for (let col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
 
     intervaloAcoplado.push(filaAcoplada);
