@@ -226,7 +226,7 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     filasEntidad.forEach(fila => {
       
       let conjunto = 0;   
-      for (let col of colNoClaveSet) {noClaveSets[conjunto++].add(String(fila[col]));}
+      for (const col of colNoClaveSet) {noClaveSets[conjunto++].add(String(fila[col]));}
                             
     });
 
