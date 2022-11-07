@@ -172,7 +172,7 @@ Avancemos un poco, justo debajo del bloque de gestión de parámetros nos encont
 ```javascript
 // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas con valores múltiples
 
-let colSet = new Set();
+const colSet = new Set();
 columnas.forEach(col => colSet.add(col - 1));
 ```
 
@@ -217,7 +217,7 @@ for (let col of colSet) {
 
   // Eliminar opciones duplicadas, si las hay, en cada columna gracias al uso de un nuevo conjunto
 
-  let opcionesSet = new Set();
+  const opcionesSet = new Set();
   String(fila[col]).split(separador).forEach(opcion => opcionesSet.add(opcion)); // split solo funciona con string, convertimos números
   opciones.push([...opcionesSet]); // también opciones.push(Array.from(opcionesSet))
 
@@ -239,7 +239,7 @@ combinaciones = [  [ 'Classroom' , 'Mañana' ] ,  [ 'Classroom' , 'Tarde' ] , [ 
 Para conseguirlo, se declara y ejecuta en el mismo momento la función `combinar()` . Aunque las IIFE pueden resultar enigmáticas, en este caso me pareció buena idea utilizar una de ellas para evitar la declaración de una función externa a `desacoplar()`, poco adecuado desde el punto de vista de la organización del código.
 
 ```
-let combinaciones = (function combinar(vector) {
+const combinaciones = (function combinar(vector) {
 
 /* Aquí el resto del código de la función */
 
@@ -253,7 +253,7 @@ if (vector.length == 1) {
 
   // Fin del proceso recursivo
 
-  let resultado = [];
+  const resultado = [];
   vector[0].forEach(opcion => resultado.push([opcion]));
   return [vector[0]];
 }
@@ -267,8 +267,8 @@ else {
   // El resultado se calcula recursivamente
 
   let resultado = [];
-  let subvector = vector.splice(0, 1)[0];
-  let subresultado = combinar(vector);
+  const subvector = vector.splice(0, 1)[0];
+  const subresultado = combinar(vector);
 
   // Composición de resultados en la secuencia recursiva >> generación de vector de combinaciones
 
@@ -293,10 +293,10 @@ Finalmente, en el **paso \[4\]** ya solo hay que duplicar cada fila tantas veces
   //     ENTRADA: combinaciones = [ [a, 1], [a, 2], [b, 1], [b, 2] ]
   //     SALIDA:  respuestaDesacoplada = [ [Pablo, a, 1, Tarde], [Pablo, a, 2, Tarde], [Pablo, b, 1, Tarde], [Pablo, b, 2, Tarde] ]
 
-  let respuestaDesacoplada = combinaciones.map(combinacion => {
+  const respuestaDesacoplada = combinaciones.map(combinacion => {
 
     let colOpciones = 0;
-    let filaDesacoplada = [];
+    const filaDesacoplada = [];
     fila.forEach((valor, columna) => {
 
       // Tomar columna de la fila original o combinación de datos generada anteriormente
@@ -333,12 +333,12 @@ El bloque de control de parámetros es prácticamente idéntico, aunque en este 
 ```javascript
 // Se construye un conjunto (set) para evitar automáticamente duplicados en columnas CLAVE
 
-let colSet = new Set();
+const colSet = new Set();
 columnas.forEach(col => colSet.add(col - 1));
 
 // ...y en este conjunto se identifican las columnas susceptibles de contener valores que deben concatenarse
 
-let colNoClaveSet = new Set();
+const colNoClaveSet = new Set();
 for (let col = 0; col < intervalo[0].length; col++) {
 
   if (!colSet.has(col)) colNoClaveSet.add(col);
@@ -360,24 +360,37 @@ La estrategia que sigue `ACOPLAR()` es la siguiente:
     2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (209 - 217).
     3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (221 - 224).
 
-**Paso \[1\]**. A destacar el uso de un carácter delimitador (`/`) cuando se concatenan los valores de las distintas columnas de tipo clave para evitar falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
+**Paso \[1\]**. A destacar el uso del método `JSON.stringify()` a la hora de realizar la identificación de las filas de la tabla que deben acoplarse por separado utilizado los valores presentes en las columnas de tipo clave. La simple comparación directa de las secuencias de texto que se obtienen al concatener los valores en las columnas clave de las distintas filas, incluso usando un caracter separador, no evita que se puedan producir falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
 
 ```javascript
 // Listos para comenzar
 
 if (encabezado) encabezado = intervalo.shift();
 
-let intervaloAcoplado = [];
+const intervaloAcoplado = [];
 
 // 1ª pasada: recorremos el intervalo fila a fila para identificar entidades (concatenación de columnas clave) únicas
 
-let entidadesClave = new Set();
+const entidadesClave = new Set();
 intervalo.forEach(fila => {
 
-  let clave = '';                
-  // Se utiliza delimitador de campo (/) para evitar confusiones (Ej: claves: col1 = 'pablo', col3 = '1' / col1 = 'pablo1', col3 = '')
-  for (let col of colSet) {clave += '/' + String(fila[col]);}
-  entidadesClave.add(clave);
+  const clave = '';                
+  // ⚠️ A la hora de diferenciar dos entidades únicas (filas) usando una serie de columnas clave:
+  //    a) No basta con concatenar los valores de las columnas clave como cadenas y simplemente compararlas. Ejemplo:
+  //       clave fila 1 → col1 = 'pablo' col2 = 'felip'     >> Clave compuesta: pablofelip
+  //       clave fila 2 → col1 = 'pa'    col2 = 'blofelip'  >> Clave compuesta: pablofelip
+  //       ✖️ Misma clave compuesta, pero entidades diferentes
+  //    b) No basta con con unir los valores de las columnas clave como cadenas utilizando un carácter delimitador. Ejemplo ("/"):
+  //       clave fila 1 → col1 = 'pablo/' col2 = 'felip'    >> Clave compuesta: pablo//felip 
+  //       clave fila 2 → col1 = 'pablo'  col2 = '/felip'   >> Clave compuesta: pablo//felip
+  //       ✖️ Misma clave compuesta, pero entidades diferentes
+  //    c) No es totalmente apropiado eliminar espacios antes y después de valores clave y unirlos usando un espacio delimitador (" "):
+  //       clave fila 1 → col1 = ' pablo' col2 = 'felip'    >> Clave compuesta: pablo felip
+  //       clave fila 2 → col1 = 'pablo'  col2 = 'felip'   >> Clave compuesta: pablo felip
+  //       ✖️ Misma clave compuesta, pero entidades estrictamente diferentes (a menos que espacios anteriores y posteriores no importen)
+  // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformada en cadenas JSON.
+  for (const col of colSet) clave.push(String(fila[col])) 
+  entidadesClave.add(JSON.stringify(clave));
 
 });
 ```
@@ -387,13 +400,14 @@ intervalo.forEach(fila => {
 ```javascript
 // 2ª pasada: obtener filas para cada clave única, combinar columnas no-clave y generar filas resultado
 
-for (let clave of entidadesClave) {
+for (const clave of entidadesClave) {
 
-  let filasEntidad = intervalo.filter(fila => {
+  const filasEntidad = intervalo.filter(fila => {
 
-    let claveActual = '';
-    for (let col of colSet) {claveActual += '/' + String(fila[col]);}
-    return clave == claveActual;
+    // let claveActual = '';
+    const claveActual = [];
+    for (const col of colSet) claveActual.push(String(fila[col]));
+    return clave == JSON.stringify(claveActual);
 
   });
 ```
@@ -403,8 +417,8 @@ for (let clave of entidadesClave) {
 ```javascript
   // Acoplar todas las filas de cada entidad, concatenando valores en columnas no-clave con separador indicado
 
-  let filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
-  let noClaveSets = [];
+  const filaAcoplada = filasEntidad[0];  // Se toma la 1ª fila del grupo como base
+  const noClaveSets = [];
   for (let col = 0; col < colNoClaveSet.size; col++) {noClaveSets.push(new Set())}; // Vector de sets para recoger valores múltiples  
   filasEntidad.forEach(fila => {
 
@@ -420,7 +434,7 @@ for (let clave of entidadesClave) {
   // Set >> Vector >> Cadena única con separador
 
   let conjunto = 0;
-  for (let col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
+  for (const col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
 
   intervaloAcoplado.push(filaAcoplada);
 
