@@ -207,7 +207,7 @@ Para entender mejor lo que sigue, permíteme retomar el ejemplo con el que se in
 
 <table><tbody><tr><td><strong>Nombre</strong></td><td><strong>Curso</strong></td><td><strong>Turno</strong></td><td><strong>Modalidad</strong></td></tr><tr><td>Prieto González, Isabel</td><td>Classroom, Edpuzzle</td><td>Mañana, Tarde</td><td>Presencial</td></tr></tbody></table>
 
-Hagamos ahora zoom :mag: sobre el **paso** **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.spli`t y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
+Hagamos ahora zoom :mag: sobre el **paso** **\[2\]**. Para cada fila se construye un vector cuyos elementos son a su vez vectores que contienen los valores múltiples, descartando duplicados, contenidos en las columnas a desacoplar indicadas por el usuario. El contenido de cada celda se trocea con la secuencia de caracteres delimitadora utilizando el método `.split` y se añade a un conjunto (`opcionesSet`) para evitar valores duplicados. Finalmente, el conjunto se transforma en vector expandiéndolo mediante el operador de propagación (`...`)
 
 ```javascript
 // Enumerar los valores únicos en cada columna que se ha indicado contiene datos múltiples
@@ -419,7 +419,7 @@ for (let clave of entidadesClave) {
 ```javascript
   // Set >> Vector >> Cadena única con separador
 
-  conjunto = 0;
+  let conjunto = 0;
   for (let col of colNoClaveSet) {filaAcoplada[col] = [...noClaveSets[conjunto++]].join(separador);}
 
   intervaloAcoplado.push(filaAcoplada);
