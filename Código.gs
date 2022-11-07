@@ -202,9 +202,7 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
     //       ✖️ Misma clave compuesta, pero entidades estrictamente diferentes (a menos que espacios anteriores y posteriores no importen)
     // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformada en cadenas JSON.
     for (let col of colSet) clave.push(String(fila[col])) 
-    // entidadesClave.add(clave);
     entidadesClave.add(JSON.stringify(clave));
-
                     
   });
 
