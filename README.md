@@ -377,18 +377,18 @@ intervalo.forEach(fila => {
   const clave = [];                
   // ⚠️ A la hora de diferenciar dos entidades únicas (filas) usando una serie de columnas clave:
   //    a) No basta con concatenar los valores de las columnas clave como cadenas y simplemente compararlas. Ejemplo:
-  //       clave fila 1 → col1 = 'pablo' col2 = 'felip'     >> Clave compuesta: pablofelip
-  //       clave fila 2 → col1 = 'pa'    col2 = 'blofelip'  >> Clave compuesta: pablofelip
+  //       clave fila 1 → col1 = 'pablo' col2 = 'felip'     >> Clave compuesta: 'pablofelip'
+  //       clave fila 2 → col1 = 'pa'    col2 = 'blofelip'  >> Clave compuesta: 'pablofelip'
   //       ✖️ Misma clave compuesta, pero entidades diferentes
-  //    b) No basta con con unir los valores de las columnas clave como cadenas utilizando un carácter delimitador. Ejemplo ("/"):
-  //       clave fila 1 → col1 = 'pablo/' col2 = 'felip'    >> Clave compuesta: pablo//felip 
-  //       clave fila 2 → col1 = 'pablo'  col2 = '/felip'   >> Clave compuesta: pablo//felip
+  //    b) No basta con con unir los valores de las columnas clave como cadenas utilizando un carácter delimitador. Ejemplo ('/'):
+  //       clave fila 1 → col1 = 'pablo/' col2 = 'felip'    >> Clave compuesta: 'pablo//felip' 
+  //       clave fila 2 → col1 = 'pablo'  col2 = '/felip'   >> Clave compuesta: 'pablo//felip'
   //       ✖️ Misma clave compuesta, pero entidades diferentes
-  //    c) No es totalmente apropiado eliminar espacios antes y después de valores clave y unirlos usando un espacio delimitador (" "):
-  //       clave fila 1 → col1 = ' pablo' col2 = 'felip'    >> Clave compuesta: pablo felip
-  //       clave fila 2 → col1 = 'pablo'  col2 = 'felip'   >> Clave compuesta: pablo felip
+  //    c) No es totalmente apropiado eliminar espacios antes y después de valores clave y unirlos usando un espacio delimitador (' '):
+  //       clave fila 1 → col1 = ' pablo' col2 = 'felip'    >> Clave compuesta: 'pablo felip'
+  //       clave fila 2 → col1 = 'pablo'  col2 = 'felip'    >> Clave compuesta: 'pablo felip'
   //       ✖️ Misma clave compuesta, pero entidades estrictamente diferentes (a menos que espacios anteriores y posteriores no importen)
-  // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformada en cadenas JSON.
+  // 💡 En su lugar, se generan vectores con valores de columnas clave y se comparan sus versiones transformadas en cadenas JSON.
   for (const col of colSet) clave.push(String(fila[col])) 
   entidadesClave.add(JSON.stringify(clave));
 
