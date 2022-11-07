@@ -266,7 +266,7 @@ else {
 
   // El resultado se calcula recursivamente
 
-  let resultado = [];
+  const resultado = [];
   const subvector = vector.splice(0, 1)[0];
   const subresultado = combinar(vector);
 
