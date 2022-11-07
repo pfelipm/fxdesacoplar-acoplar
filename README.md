@@ -360,7 +360,7 @@ La estrategia que sigue `ACOPLAR()` es la siguiente:
     2.  Se identifican los valores distintos presentes en cada columna que no está designada como clave (209 - 217).
     3.  Se construye la fila canónica concatenando los valores encontrados usando la secuencia de caracteres de separación y se almacena en la matriz resultado que devolverá la función (221 - 224).
 
-**Paso \[1\]**. A destacar el uso del método `JSON.stringify()` a la hora de realizar la identificación de las filas de la tabla que deben acoplarse por separado utilizado los valores presentes en las columnas de tipo clave. La simple comparación directa de las secuencias de texto que se obtienen al concatener los valores en las columnas clave de las distintas filas, incluso usando un caracter separador, no evita que se puedan producir falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
+**Paso \[1\]**. A destacar el uso del método `JSON.stringify()` a la hora de realizar la identificación de las filas de la tabla que deben acoplarse por separado comparando los valores combinados presentes en las columnas de tipo clave. La simple comparación directa de las secuencias de texto que se obtienen al concatener los valores en las columnas clave de las distintas filas, incluso usando un caracter separador, no evita que se puedan producir falsos positivos. Las claves de cada entidad se almacenan en un conjunto (sí, otra vez) para evitar nuevamente valores duplicados.
 
 ```javascript
 // Listos para comenzar
