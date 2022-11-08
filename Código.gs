@@ -214,7 +214,6 @@ function ACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 
     const filasEntidad = intervalo.filter(fila => {
     
-      // let claveActual = '';
       const claveActual = [];
       for (const col of colSet) claveActual.push(String(fila[col]));
       return clave == JSON.stringify(claveActual);
