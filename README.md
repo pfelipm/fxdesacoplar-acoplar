@@ -9,6 +9,8 @@
 *   [Mejoras](#mejoras)
 *   [Licencia](#licencia)
 
+> En [este repositorio](https://github.com/pfelipm/hdcplus/blob/master/fx_acoplar_desacoplar.gs) encontrarás versiones de las funciones `ACOPLAR()`y `DESACOPLAR()` que incluyen mejoras significativas.
+
 # (Des)acoplando las filas de un intervalo de datos
 
 Este repositorio contiene el código Apps Script necesario para implementar las funciones personalizadas para hojas de cálculo de Google `DESACOPLAR()` y `ACOPLAR()`. Encontrarás una motivación más detallada acerca de su utilidad en este [artículo introductorio](https://pablofelip.online/desacoplar-acoplar/).
