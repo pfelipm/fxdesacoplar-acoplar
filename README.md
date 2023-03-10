@@ -125,7 +125,7 @@ function DESACOPLAR(intervalo, encabezado, separador, columna, ...masColumnas) {
 Como hemos visto en apartados anteriores de este documento, `encabezado` y `separador` son parámetros opcionales de la función (de `columna` y `...masColumnas` hablaremos en un momento porque esa es otra guerra). Entonces ¿por qué no hemos usado la sintaxis ES6 habitual en estos casos? Algo como esto:
 
 ```javascript
-function DESACOPLAR(intervalo, encabezado = 'true', separador = ', ', columna, ...masColumnas) {
+function DESACOPLAR(intervalo, encabezado = true, separador = ', ', columna, ...masColumnas) {
 ```
 
 Pues no lo hemos hecho porque este tipo de declaraciones esconde una trampa, y la trampa es que no es posible utilizar el punto y coma para "pasar" al siguiente parámetro, obviando su declaración explícita, de modo que se adopte el valor indicado por defecto. ¿Y eso por qué? Porque en ese caso lo que se le pasa realmente a la función es una cadena vacía. Y una cadena vacía no es lo mismo que nada.
